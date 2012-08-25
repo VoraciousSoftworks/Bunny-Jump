@@ -33,7 +33,7 @@ public class Play extends Screen {
 		int size = (int) (difficulty * 0xfff);
 
 		int pitfall = rand.nextInt(size / 10);
-		float[] map = generatePerlinNoise(generateWhiteNoise(size), 10);
+		float[] map = generatePerlinNoise(generateWhiteNoise(size), 9);
 		for (int i = 0; i < size; i++) {
 			if (i == pitfall) {
 				int pitfallSize = rand.nextInt(60);
