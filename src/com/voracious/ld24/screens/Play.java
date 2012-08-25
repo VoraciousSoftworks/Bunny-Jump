@@ -19,6 +19,7 @@ public class Play extends Screen {
 	//private int counter; //Used to count the placement for spikes. Insures that spikes won't overlap
 	private Random rand = new Random();
 	private Bunny bunny = new Bunny();
+	private Bunny fuckBunny = new Bunny();
 	private Sprite spikes = new Sprite(5, 5, "/spikes.png");
 
 	public Play(int width, int height) {
@@ -51,6 +52,14 @@ public class Play extends Screen {
 				heightMap.add(Integer.valueOf((int) (map[i] * getHeight() / 2) + 1));
 			}
 		}
+		fuckBunny.setX(heightMap.size() - fuckBunny.WIDTH);		
+		int highest = 0;
+		for(int l=(int)fuckBunny.getX(); l<fuckBunny.getWidth()+(int)fuckBunny.getX()-1; l++){
+			if(highest < heightMap.get(l)){
+				highest = heightMap.get(l);
+			}
+		}
+		fuckBunny.setY(highest);
 	}
 
 	public float[] generateWhiteNoise(int width) {
