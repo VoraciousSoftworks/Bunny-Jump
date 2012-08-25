@@ -39,7 +39,7 @@ public class Entity {
      * @param numFrames number of frames in each animation.
      * @param image image file location
      */
-    public Entity(int width, int height, int numFrames[], int animations[], String image) {
+    public Entity(int width, int height, int numFrames[], String image) {
         this.width = width;
         this.height = height;
 
