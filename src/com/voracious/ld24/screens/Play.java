@@ -37,7 +37,7 @@ public class Play extends Screen {
 		float[] map = generatePerlinNoise(generateWhiteNoise(size), 9);
 		for (int i = 0; i < size; i++) {
 			if (i == pitfall) {
-				int pitfallSize = rand.nextInt(60);
+				int pitfallSize = 25 + rand.nextInt(50-25);
 				for (int j = 0; j < pitfallSize; j++) {
 					heightMap.add(0);
 				}
