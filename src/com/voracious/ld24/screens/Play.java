@@ -16,7 +16,6 @@ public class Play extends Screen {
 	private static ArrayList<Integer> heightMap = new ArrayList<Integer>();
 	private static int offsetX = 0;
 	private static boolean[] keysDown = { false, false, false, false }; // w, a, s, d
-	//private int counter; //Used to count the placement for spikes. Insures that spikes won't overlap
 	private Random rand = new Random();
 	private Bunny bunny = new Bunny();
 	private Sprite spikes = new Sprite(5, 5, "/spikes.png");
@@ -28,6 +27,7 @@ public class Play extends Screen {
 	public void start() {
 		InputHandler.register(this);
 		generateLevel(1.0f);
+		Game.getMusic("loop").play(true);
 	}
 
 	public void stop() {
@@ -153,7 +153,7 @@ public class Play extends Screen {
 
 	public void tick() {
 		if (keysDown[1]) { // a
-			if (bunny.getX() > 45 || (offsetX == 0 && bunny.getX() > 0)) {
+			if (bunny.getX() > 45 || (offsetX == 0 && bunny.getX() - bunny.getMoveSpeed() > 0)) {
 				bunny.setX(bunny.getX() - bunny.getMoveSpeed());
 			}else if(offsetX > 0){
 				offsetX -= bunny.getMoveSpeed();
@@ -161,7 +161,7 @@ public class Play extends Screen {
 			
 			bunny.nextFrame();
 		} else if (keysDown[3]) { // d
-			if (bunny.getX() < this.getWidth() - bunny.getWidth() - 45 || (offsetX == heightMap.size() - this.getWidth() && bunny.getX() < this.getWidth() - bunny.getWidth())) {
+			if (bunny.getX() < this.getWidth() - bunny.getWidth() - 45 || (offsetX == heightMap.size() - this.getWidth() && bunny.getX() + bunny.getMoveSpeed() < this.getWidth() - bunny.getWidth())) {
 				bunny.setX(bunny.getX() + bunny.getMoveSpeed());
 			}else if(offsetX < heightMap.size() - this.getWidth()){
 				offsetX += bunny.getMoveSpeed();
