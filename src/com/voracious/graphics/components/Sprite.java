@@ -128,6 +128,39 @@ public class Sprite {
             screen.setPixel(pixels[iterator], screenX, screenY);
         }
     }
+    
+    public void drawColumn(Screen screen, int x, int y, int col){
+    	drawColumn(screen, x, y, col, false, false, false);
+    }
+    
+    public void drawColumn(Screen screen, int x, int y, int col, boolean flipX, boolean flipY, boolean rotate90){
+    	for (int i = col; i < pixels.length; i++) {
+            int iterator = i;// * width;
+            int screenX = x + (iterator % width);
+            int screenY = y + (iterator / width);
+
+            if (rotate90) {
+                int tempX = screenX;
+                screenX = screenY - y + x;
+                screenY = tempX - x + y;
+
+                int tempWidth = getWidth();
+                this.width = this.height;
+                this.height = tempWidth;
+            }
+
+            if (flipX && flipY) {
+            	iterator = (height - 1 - (iterator / width)) * width + (width - 1 - (iterator % width));
+            } else if (flipX) {
+            	iterator = (iterator / width) * width + (width - 1 - (iterator % width));
+            } else if (flipY) {
+            	iterator = (height - 1 - (iterator / width)) * width + (iterator % width);
+            }
+
+            screen.setPixel(pixels[iterator], screenX, screenY);
+            i+=width-1;
+        }
+    }
 
     public int getWidth() {
         return width;
