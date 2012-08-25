@@ -1,6 +1,7 @@
 package com.voracious.graphics.components;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 import com.voracious.graphics.Game;
 
@@ -74,6 +75,13 @@ public class Screen {
     }
     
     /**
+     * Called when the mouse is clicked if this screen is registered with MouseHandler
+     * @param e
+     */
+    public void mouseClicked(MouseEvent e){
+    }
+    
+    /**
      * Called when a key is pressed if this screen is registered with input handler
      * @param e
      */
@@ -113,5 +121,9 @@ public class Screen {
      * Called when this screen is made in-active
      */
     public void stop() {
+    }
+    
+    public int[] getPixels(){
+    	return pixels;
     }
 }

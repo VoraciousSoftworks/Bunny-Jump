@@ -75,6 +75,7 @@ public class Game extends Canvas implements Runnable {
     public void init() {
         TinySound.init();
         this.addKeyListener(new InputHandler());
+        this.addMouseListener(new MouseHandler());
 
         Game.registerMusic("loop", TinySound.loadMusic("/loop.wav"));
 

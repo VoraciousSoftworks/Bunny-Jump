@@ -6,24 +6,29 @@ import java.util.Random;
 
 import com.voracious.graphics.Game;
 import com.voracious.graphics.InputHandler;
+import com.voracious.graphics.MouseHandler;
 import com.voracious.graphics.components.Screen;
 import com.voracious.graphics.components.Sprite;
 import com.voracious.graphics.components.Text;
 import com.voracious.ld24.entities.Bunny;
 
 public class Play extends Screen {
-	
+
 	public static final double gravityPower = 1.0;
 	private static ArrayList<Integer> heightMap = new ArrayList<Integer>();
 	private static int offsetX = 0;
-	private static boolean[] keysDown = { false, false, false, false }; // w, a, s, d
+	private static boolean[] keysDown = { false, false, false, false }; // w, a,
+																		// s, d
 	private Random rand = new Random();
+	private Evolution evolution;
 	private Bunny bunny = new Bunny();
 	private Bunny femBunny = new Bunny();
 	private Sprite spikes = new Sprite(5, 5, "/spikes.png");
 
 	public Play(int width, int height) {
 		super(width, height);
+		evolution = new Evolution(width, height, bunny);
+		MouseHandler.register(evolution);
 	}
 
 	public void start() {
@@ -43,21 +48,23 @@ public class Play extends Screen {
 		float[] map = generatePerlinNoise(generateWhiteNoise(size), 9);
 		for (int i = 0; i < size; i++) {
 			if (i == pitfall) {
-				int pitfallSize = 25 + rand.nextInt(50-25);
+				int pitfallSize = 25 + rand.nextInt(50 - 25);
 				for (int j = 0; j < pitfallSize; j++) {
 					heightMap.add(0);
 				}
 				i += pitfallSize;
 				pitfall = rand.nextInt(size / 10) + i;
 			} else {
-				heightMap.add(Integer.valueOf((int) (map[i] * getHeight() / 2) + 1));
+				heightMap.add(Integer
+						.valueOf((int) (map[i] * getHeight() / 2) + 1));
 			}
 		}
 		femBunny.setX(this.getWidth() - femBunny.getWidth());
 		femBunny.setFacingLeft(true);
 		int highest = 0;
-		for(int l= heightMap.size() - femBunny.getWidth(); l < heightMap.size(); l++){
-			if(highest < heightMap.get(l)){
+		for (int l = heightMap.size() - femBunny.getWidth(); l < heightMap
+				.size(); l++) {
+			if (highest < heightMap.get(l)) {
 				highest = heightMap.get(l);
 			}
 		}
@@ -141,65 +148,82 @@ public class Play extends Screen {
 	float Interpolate(float x0, float x1, float alpha) {
 		return x0 * (1 - alpha) + alpha * x1;
 	}
-	
+
 	public void render() {
 		clear(0x2b2bAA);
-		int counter = 5;
-		for (int i = 0; i < this.getWidth(); i++) {
-			int height = heightMap.get(i + offsetX);
-			for (int j = 0; j < height; j++) {
-				this.setPixel(0x2bAA2b, i, 149 - j);
-			}
-			if(height == 0){
-				if(counter == 5){
-					spikes.draw(this, i, this.getHeight() - spikes.getHeight());
-					counter = 0;
+
+		if (false) {
+			evolution.render();
+			evolution.draw(this.getPixels());
+		} else {
+			int counter = 5;
+			for (int i = 0; i < this.getWidth(); i++) {
+				int height = heightMap.get(i + offsetX);
+				for (int j = 0; j < height; j++) {
+					this.setPixel(0x2bAA2b, i, 149 - j);
 				}
-				counter++;
+				if (height == 0) {
+					if (counter == 5) {
+						spikes.draw(this, i,
+								this.getHeight() - spikes.getHeight());
+						counter = 0;
+					}
+					counter++;
+				}
 			}
+			if (offsetX > heightMap.size() - this.getWidth()
+					- femBunny.getWidth()) {
+				femBunny.setX((this.getWidth() - femBunny.getWidth())
+						+ (heightMap.size() - this.getWidth() - offsetX));
+				femBunny.draw(this);
+			}
+			bunny.draw(this);
+			new Text("test").draw(this, 0, 0);
 		}
-		if(offsetX > heightMap.size() - this.getWidth() - femBunny.getWidth()){
-			femBunny.setX((this.getWidth() - femBunny.getWidth()) + (heightMap.size() - this.getWidth() - offsetX));
-			femBunny.draw(this);
-		}
-		bunny.draw(this);
-		new Text("test").draw(this, 0, 0);
 	}
 
 	public void tick() {
 		if (keysDown[1]) { // a
-			if (bunny.getX() > 45 || (offsetX == 0 && bunny.getX() - bunny.getMoveSpeed() > 0)) {
+			if (bunny.getX() > 45
+					|| (offsetX == 0 && bunny.getX() - bunny.getMoveSpeed() > 0)) {
 				bunny.setX(bunny.getX() - bunny.getMoveSpeed());
-			}else if(offsetX - bunny.getMoveSpeed() > 0){
+			} else if (offsetX - bunny.getMoveSpeed() > 0) {
 				offsetX -= bunny.getMoveSpeed();
-			}else{
+			} else {
 				offsetX = 0;
 			}
-			
+
 			bunny.nextFrame();
 		} else if (keysDown[3]) { // d
-			if (bunny.getX() < this.getWidth() - bunny.getWidth() - 45 || (offsetX == heightMap.size() - this.getWidth() && bunny.getX() + bunny.getMoveSpeed() < this.getWidth() - bunny.getWidth())) {
+			if (bunny.getX() < this.getWidth() - bunny.getWidth() - 45
+					|| (offsetX == heightMap.size() - this.getWidth() && bunny
+							.getX() + bunny.getMoveSpeed() < this.getWidth()
+							- bunny.getWidth())) {
 				bunny.setX(bunny.getX() + bunny.getMoveSpeed());
-			}else if(offsetX < heightMap.size() - this.getWidth() - bunny.getMoveSpeed()){
+			} else if (offsetX < heightMap.size() - this.getWidth()
+					- bunny.getMoveSpeed()) {
 				offsetX += bunny.getMoveSpeed();
-			}else{
+			} else {
 				offsetX = heightMap.size() - this.getWidth();
 			}
 			bunny.nextFrame();
 		}
-		
+
 		int highest = 0;
-		for(int i=(int)bunny.getX() + offsetX; i<bunny.getWidth()+(int)bunny.getX()+offsetX; i++){
-			if(highest < heightMap.get(i)){
+		for (int i = (int) bunny.getX() + offsetX; i < bunny.getWidth()
+				+ (int) bunny.getX() + offsetX; i++) {
+			if (highest < heightMap.get(i)) {
 				highest = heightMap.get(i);
 			}
 		}
-		
+
 		bunny.tick();
-		if(bunny.isFalling() == true && bunny.getY() > getHeight() - highest - bunny.getHeight() - bunny.getVelY()){
+		if (bunny.isFalling() == true
+				&& bunny.getY() > getHeight() - highest - bunny.getHeight()
+						- bunny.getVelY()) {
 			bunny.setFalling(false);
 			bunny.setVelY(0.0);
-		}else if(!bunny.isFalling()){
+		} else if (!bunny.isFalling()) {
 			bunny.setY(getHeight() - highest - bunny.getHeight());
 		}
 	}
@@ -207,7 +231,7 @@ public class Play extends Screen {
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyChar() == 'w') {
 			keysDown[0] = true;
-			if(!bunny.isFalling()){
+			if (!bunny.isFalling()) {
 				bunny.jump();
 			}
 		} else if (e.getKeyChar() == 'a') {
