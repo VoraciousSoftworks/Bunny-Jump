@@ -11,7 +11,7 @@ import com.voracious.ld24.entities.Bunny;
 
 public class Play extends Screen {
 	
-	public static final double gravityPower = 1.4;
+	public static final double gravityPower = 1.0;
 	private static ArrayList<Integer> heightMap = new ArrayList<Integer>();
 	private static int offsetX = 0;
 	private static boolean[] keysDown = { false, false, false, false }; // w, a, s, d
