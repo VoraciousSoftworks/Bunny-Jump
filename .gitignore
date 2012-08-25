@@ -8,3 +8,6 @@
 .settings
 .classpath
 bin
+jar-in-jar-loader.zip
+build.xml
+.external*

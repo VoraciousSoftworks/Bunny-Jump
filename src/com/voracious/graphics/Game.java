@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Insets;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -17,7 +16,8 @@ import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
 
 import com.voracious.graphics.components.Screen;
-import com.voracious.project.screens.Temp;
+import com.voracious.ld24.screens.Play;
+import com.voracious.ld24.screens.Temp;
 
 /**
  * Basic boiler plate code to create a window and allow rendering pixel data to it.
@@ -78,8 +78,8 @@ public class Game extends Canvas implements Runnable {
         this.addKeyListener(new InputHandler());
 
         //TODO: Register screens and set the initial screen
-        Game.registerScreen("temp", new Temp(Game.WIDTH, Game.HEIGHT));
-        Game.switchScreen("temp");
+        Game.registerScreen("play", new Play(Game.WIDTH, Game.HEIGHT));
+        Game.switchScreen("play");
 
         //TODO: Register sounds
         //Game.registerSound("name", TinySound.loadSound("sound.wav"));

@@ -1,4 +1,4 @@
-package com.voracious.project.screens;
+package com.voracious.ld24.screens;
 
 import java.awt.event.KeyEvent;
 
