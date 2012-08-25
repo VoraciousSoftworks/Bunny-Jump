@@ -4,17 +4,17 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.voracious.graphics.Game;
 import com.voracious.graphics.InputHandler;
 import com.voracious.graphics.components.Screen;
+import com.voracious.ld24.entities.Bunny;
 
 public class Play extends Screen {
 
 	private static ArrayList<Integer> heightMap = new ArrayList<Integer>();
 	private static int offsetX = 0;
-	private static boolean[] keysDown = { false, false, false, false }; // w, a,
-																		// s, d
+	private static boolean[] keysDown = { false, false, false, false }; // w, a, s, d
 	private Random rand = new Random();
+	private Bunny bunny = new Bunny();
 
 	public Play(int width, int height) {
 		super(width, height);
@@ -135,6 +135,8 @@ public class Play extends Screen {
 				// System.out.println(j);
 			}
 		}
+		
+		bunny.draw(this);
 	}
 
 	public void tick() {
