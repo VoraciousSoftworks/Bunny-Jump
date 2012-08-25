@@ -16,8 +16,10 @@ public class Play extends Screen {
 	private static ArrayList<Integer> heightMap = new ArrayList<Integer>();
 	private static int offsetX = 0;
 	private static boolean[] keysDown = { false, false, false, false }; // w, a, s, d
+	//private int counter; //Used to count the placement for spikes. Insures that spikes won't overlap
 	private Random rand = new Random();
 	private Bunny bunny = new Bunny();
+	private Sprite spikes = new Sprite(5, 5, "/spikes.png");
 
 	public Play(int width, int height) {
 		super(width, height);
@@ -46,7 +48,7 @@ public class Play extends Screen {
 				i += pitfallSize;
 				pitfall = rand.nextInt(size / 10) + i;
 			} else {
-				heightMap.add(Integer.valueOf((int) (map[i] * getHeight() / 2)));
+				heightMap.add(Integer.valueOf((int) (map[i] * getHeight() / 2) + 1));
 			}
 		}
 	}
@@ -131,10 +133,18 @@ public class Play extends Screen {
 	
 	public void render() {
 		clear(0x2b2bAA);
+		int counter = 5;
 		for (int i = 0; i < this.getWidth(); i++) {
 			int height = heightMap.get(i + offsetX);
 			for (int j = 0; j < height; j++) {
 				this.setPixel(0x2bAA2b, i, 149 - j);
+			}
+			if(height == 0){
+				if(counter == 5){
+					spikes.draw(this, i, this.getHeight() - spikes.getHeight());
+					counter = 0;
+				}
+				counter++;
 			}
 		}
 		
