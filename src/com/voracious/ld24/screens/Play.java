@@ -7,6 +7,7 @@ import java.util.Random;
 import com.voracious.graphics.Game;
 import com.voracious.graphics.InputHandler;
 import com.voracious.graphics.components.Screen;
+import com.voracious.graphics.components.Sprite;
 import com.voracious.ld24.entities.Bunny;
 
 public class Play extends Screen {
