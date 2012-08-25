@@ -13,6 +13,14 @@ public class Bunny extends Entity {
 	
 	private double velY = 0.0;
 	private double jumpPower = 10.0;
+	public double getJumpPower() {
+		return jumpPower;
+	}
+
+	public void setJumpPower(double jumpPower) {
+		this.jumpPower = jumpPower;
+	}
+
 	private double moveSpeed = 2.5;
 	private boolean falling = false;
 
