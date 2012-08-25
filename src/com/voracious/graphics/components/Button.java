@@ -7,15 +7,15 @@ public class Button {
 	private int width;
 	private int height;
 	private String action;
-	private boolean plus;
+	private String label;
 	
-	public Button(int x, int y, int width, int height, String action, boolean plus) {
+	public Button(int x, int y, int width, int height, String action, String label) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
 		this.action = action;
-		this.plus = plus;
+		this.label = label;
 	}
 
 	public int getX() {
@@ -58,12 +58,12 @@ public class Button {
 		this.action = action;
 	}
 
-	public boolean isPlus() {
-		return plus;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setPlus(boolean plus) {
-		this.plus = plus;
+	public void setLabel(String label) {
+		this.label = label;
 	}
 	
 	public boolean contains(int x, int y){

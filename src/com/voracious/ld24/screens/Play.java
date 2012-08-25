@@ -24,15 +24,16 @@ public class Play extends Screen {
 	private Bunny bunny = new Bunny();
 	private Bunny femBunny = new Bunny();
 	private Sprite spikes = new Sprite(5, 5, "/spikes.png");
+	private boolean selectingStats = false;
 
 	public Play(int width, int height) {
 		super(width, height);
-		evolution = new Evolution(width, height, bunny);
-		MouseHandler.register(evolution);
+		evolution = new Evolution(width, height, bunny, this);
 	}
 
 	public void start() {
 		InputHandler.register(this);
+		MouseHandler.register(evolution);
 		generateLevel(1.0f);
 		Game.getMusic("loop").play(true);
 	}
@@ -137,7 +138,7 @@ public class Play extends Screen {
 			}
 		}
 
-		// normalisation
+		// Normalization
 		for (int i = 0; i < width; i++) {
 			perlinNoise[i] /= totalAmplitude;
 		}
@@ -152,7 +153,7 @@ public class Play extends Screen {
 	public void render() {
 		clear(0x2b2bAA);
 
-		if (false) {
+		if (selectingStats) {
 			evolution.render();
 			evolution.draw(this.getPixels());
 		} else {
@@ -183,48 +184,52 @@ public class Play extends Screen {
 	}
 
 	public void tick() {
-		if (keysDown[1]) { // a
-			if (bunny.getX() > 45
-					|| (offsetX == 0 && bunny.getX() - bunny.getMoveSpeed() > 0)) {
-				bunny.setX(bunny.getX() - bunny.getMoveSpeed());
-			} else if (offsetX - bunny.getMoveSpeed() > 0) {
-				offsetX -= bunny.getMoveSpeed();
-			} else {
-				offsetX = 0;
+		if (selectingStats) {
+
+		} else {
+			if (keysDown[1]) { // a
+				if (bunny.getX() > 45
+						|| (offsetX == 0 && bunny.getX() - bunny.getMoveSpeed() > 0)) {
+					bunny.setX(bunny.getX() - bunny.getMoveSpeed());
+				} else if (offsetX - bunny.getMoveSpeed() > 0) {
+					offsetX -= bunny.getMoveSpeed();
+				} else {
+					offsetX = 0;
+				}
+
+				bunny.nextFrame();
+			} else if (keysDown[3]) { // d
+				if (bunny.getX() < this.getWidth() - bunny.getWidth() - 45
+						|| (offsetX == heightMap.size() - this.getWidth() && bunny
+								.getX() + bunny.getMoveSpeed() < this
+								.getWidth() - bunny.getWidth())) {
+					bunny.setX(bunny.getX() + bunny.getMoveSpeed());
+				} else if (offsetX < heightMap.size() - this.getWidth()
+						- bunny.getMoveSpeed()) {
+					offsetX += bunny.getMoveSpeed();
+				} else {
+					offsetX = heightMap.size() - this.getWidth();
+				}
+				bunny.nextFrame();
 			}
 
-			bunny.nextFrame();
-		} else if (keysDown[3]) { // d
-			if (bunny.getX() < this.getWidth() - bunny.getWidth() - 45
-					|| (offsetX == heightMap.size() - this.getWidth() && bunny
-							.getX() + bunny.getMoveSpeed() < this.getWidth()
-							- bunny.getWidth())) {
-				bunny.setX(bunny.getX() + bunny.getMoveSpeed());
-			} else if (offsetX < heightMap.size() - this.getWidth()
-					- bunny.getMoveSpeed()) {
-				offsetX += bunny.getMoveSpeed();
-			} else {
-				offsetX = heightMap.size() - this.getWidth();
+			int highest = 0;
+			for (int i = (int) bunny.getX() + offsetX; i < bunny.getWidth()
+					+ (int) bunny.getX() + offsetX; i++) {
+				if (highest < heightMap.get(i)) {
+					highest = heightMap.get(i);
+				}
 			}
-			bunny.nextFrame();
-		}
 
-		int highest = 0;
-		for (int i = (int) bunny.getX() + offsetX; i < bunny.getWidth()
-				+ (int) bunny.getX() + offsetX; i++) {
-			if (highest < heightMap.get(i)) {
-				highest = heightMap.get(i);
+			bunny.tick();
+			if (bunny.isFalling() == true
+					&& bunny.getY() > getHeight() - highest - bunny.getHeight()
+							- bunny.getVelY()) {
+				bunny.setFalling(false);
+				bunny.setVelY(0.0);
+			} else if (!bunny.isFalling()) {
+				bunny.setY(getHeight() - highest - bunny.getHeight());
 			}
-		}
-
-		bunny.tick();
-		if (bunny.isFalling() == true
-				&& bunny.getY() > getHeight() - highest - bunny.getHeight()
-						- bunny.getVelY()) {
-			bunny.setFalling(false);
-			bunny.setVelY(0.0);
-		} else if (!bunny.isFalling()) {
-			bunny.setY(getHeight() - highest - bunny.getHeight());
 		}
 	}
 
@@ -242,6 +247,8 @@ public class Play extends Screen {
 		} else if (e.getKeyChar() == 'd') {
 			keysDown[3] = true;
 			bunny.setFacingLeft(false);
+		}else if(e.getKeyChar() == 'k'){
+			endRun();
 		}
 	}
 
@@ -255,5 +262,21 @@ public class Play extends Screen {
 		} else if (e.getKeyChar() == 'd') {
 			keysDown[3] = false;
 		}
+	}
+	
+	public void endRun(){
+		setSelectingStats(true);
+		bunny.setX(0);
+		offsetX = 0;
+		heightMap.clear();
+		generateLevel(1.0f);
+	}
+	
+	public void setSelectingStats(boolean selecting){
+		selectingStats = selecting;
+	}
+	
+	public boolean isSelectingStats(){
+		return selectingStats;
 	}
 }
