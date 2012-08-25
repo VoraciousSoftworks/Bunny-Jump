@@ -18,7 +18,7 @@ public class Play extends Screen {
 	private static boolean[] keysDown = { false, false, false, false }; // w, a, s, d
 	private Random rand = new Random();
 	private Bunny bunny = new Bunny();
-	private Bunny fuckBunny = new Bunny();
+	private Bunny femBunny = new Bunny();
 	private Sprite spikes = new Sprite(5, 5, "/spikes.png");
 
 	public Play(int width, int height) {
@@ -28,7 +28,7 @@ public class Play extends Screen {
 	public void start() {
 		InputHandler.register(this);
 		generateLevel(1.0f);
-		Game.getMusic("loop").play(true);
+		//Game.getMusic("loop").play(true);
 	}
 
 	public void stop() {
@@ -52,14 +52,15 @@ public class Play extends Screen {
 				heightMap.add(Integer.valueOf((int) (map[i] * getHeight() / 2) + 1));
 			}
 		}
-		fuckBunny.setX(heightMap.size() - fuckBunny.WIDTH);		
+		femBunny.setX(this.getWidth() - femBunny.getWidth());
+		femBunny.setFacingLeft(true);
 		int highest = 0;
-		for(int l=(int)fuckBunny.getX(); l<fuckBunny.getWidth()+(int)fuckBunny.getX()-1; l++){
+		for(int l= heightMap.size() - femBunny.getWidth(); l < heightMap.size(); l++){
 			if(highest < heightMap.get(l)){
 				highest = heightMap.get(l);
 			}
 		}
-		fuckBunny.setY(highest);
+		femBunny.setY(this.getHeight() - highest - femBunny.getHeight());
 	}
 
 	public float[] generateWhiteNoise(int width) {
@@ -156,7 +157,10 @@ public class Play extends Screen {
 				counter++;
 			}
 		}
-		
+		if(offsetX > heightMap.size() - this.getWidth() - femBunny.getWidth()){
+			femBunny.setX((this.getWidth() - femBunny.getWidth()) + (heightMap.size() - this.getWidth() - offsetX));
+			femBunny.draw(this);
+		}
 		bunny.draw(this);
 	}
 
@@ -164,16 +168,20 @@ public class Play extends Screen {
 		if (keysDown[1]) { // a
 			if (bunny.getX() > 45 || (offsetX == 0 && bunny.getX() - bunny.getMoveSpeed() > 0)) {
 				bunny.setX(bunny.getX() - bunny.getMoveSpeed());
-			}else if(offsetX > 0){
+			}else if(offsetX - bunny.getMoveSpeed() > 0){
 				offsetX -= bunny.getMoveSpeed();
+			}else{
+				offsetX = 0;
 			}
 			
 			bunny.nextFrame();
 		} else if (keysDown[3]) { // d
 			if (bunny.getX() < this.getWidth() - bunny.getWidth() - 45 || (offsetX == heightMap.size() - this.getWidth() && bunny.getX() + bunny.getMoveSpeed() < this.getWidth() - bunny.getWidth())) {
 				bunny.setX(bunny.getX() + bunny.getMoveSpeed());
-			}else if(offsetX < heightMap.size() - this.getWidth()){
+			}else if(offsetX < heightMap.size() - this.getWidth() - bunny.getMoveSpeed()){
 				offsetX += bunny.getMoveSpeed();
+			}else{
+				offsetX = heightMap.size() - this.getWidth();
 			}
 			bunny.nextFrame();
 		}
