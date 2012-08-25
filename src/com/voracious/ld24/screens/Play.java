@@ -147,12 +147,15 @@ public class Play extends Screen {
 			}else if(offsetX > 0){
 				offsetX -= bunny.getMoveSpeed();
 			}
+			
+			bunny.nextFrame();
 		} else if (keysDown[3]) { // d
 			if (bunny.getX() < this.getWidth() - bunny.getWidth() - 15 || (offsetX == heightMap.size() - this.getWidth() && bunny.getX() < this.getWidth() - bunny.getWidth())) {
 				bunny.setX(bunny.getX() + bunny.getMoveSpeed());
 			}else if(offsetX < heightMap.size() - this.getWidth()){
 				offsetX += bunny.getMoveSpeed();
 			}
+			bunny.nextFrame();
 		}
 		
 		int highest = 0;

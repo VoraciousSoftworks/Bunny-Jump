@@ -8,7 +8,7 @@ public class Bunny extends Entity {
 
 	public static final int WIDTH = 20;
 	public static final int HEIGHT = 12;
-	public static final int[] numFrames = { 1 };
+	public static final int[] numFrames = { 4 };
 	public static final String imageURI = "/Bunny.png";
 	
 	private double velY = 0.0;
