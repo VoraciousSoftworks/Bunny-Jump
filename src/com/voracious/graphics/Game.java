@@ -17,7 +17,6 @@ import kuusisto.tinysound.TinySound;
 
 import com.voracious.graphics.components.Screen;
 import com.voracious.ld24.screens.Play;
-import com.voracious.ld24.screens.Temp;
 
 /**
  * Basic boiler plate code to create a window and allow rendering pixel data to it.

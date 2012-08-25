@@ -10,7 +10,8 @@ import com.voracious.graphics.components.Screen;
 import com.voracious.ld24.entities.Bunny;
 
 public class Play extends Screen {
-
+	
+	public static final double gravityPower = 1.4;
 	private static ArrayList<Integer> heightMap = new ArrayList<Integer>();
 	private static int offsetX = 0;
 	private static boolean[] keysDown = { false, false, false, false }; // w, a, s, d
@@ -126,7 +127,7 @@ public class Play extends Screen {
 	float Interpolate(float x0, float x1, float alpha) {
 		return x0 * (1 - alpha) + alpha * x1;
 	}
-
+	
 	public void render() {
 		clear(0x2b2bAA);
 		for (int i = 0; i < this.getWidth(); i++) {
@@ -142,15 +143,15 @@ public class Play extends Screen {
 	public void tick() {
 		if (keysDown[1]) { // a
 			if (bunny.getX() > 15 || (offsetX == 0 && bunny.getX() > 0)) {
-				bunny.setX(bunny.getX() - 1);
+				bunny.setX(bunny.getX() - bunny.getMoveSpeed());
 			}else if(offsetX > 0){
-				offsetX--;
+				offsetX -= bunny.getMoveSpeed();
 			}
 		} else if (keysDown[3]) { // d
 			if (bunny.getX() < this.getWidth() - bunny.getWidth() - 15 || (offsetX == heightMap.size() - this.getWidth() && bunny.getX() < this.getWidth() - bunny.getWidth())) {
-				bunny.setX(bunny.getX() + 1);
+				bunny.setX(bunny.getX() + bunny.getMoveSpeed());
 			}else if(offsetX < heightMap.size() - this.getWidth()){
-				offsetX++;
+				offsetX += bunny.getMoveSpeed();
 			}
 		}
 		
@@ -161,12 +162,21 @@ public class Play extends Screen {
 			}
 		}
 		
-		bunny.setY(getHeight() - highest - bunny.getHeight());
+		bunny.tick();
+		if(bunny.isFalling() == true && bunny.getY() > getHeight() - highest - bunny.getHeight() - bunny.getVelY()){
+			bunny.setFalling(false);
+			bunny.setVelY(0.0);
+		}else if(!bunny.isFalling()){
+			bunny.setY(getHeight() - highest - bunny.getHeight());
+		}
 	}
 
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyChar() == 'w') {
 			keysDown[0] = true;
+			if(!bunny.isFalling()){
+				bunny.jump();
+			}
 		} else if (e.getKeyChar() == 'a') {
 			keysDown[1] = true;
 			bunny.setFacingLeft(true);
