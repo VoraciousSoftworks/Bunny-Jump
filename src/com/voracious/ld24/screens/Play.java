@@ -10,6 +10,7 @@ import com.voracious.graphics.components.Screen;
 import com.voracious.graphics.components.Sprite;
 import com.voracious.graphics.components.Text;
 import com.voracious.ld24.entities.Bunny;
+import com.voracious.ld24.entities.Jet;
 
 public class Play extends Screen {
 	
@@ -21,6 +22,7 @@ public class Play extends Screen {
 	private Bunny bunny = new Bunny();
 	private Bunny femBunny = new Bunny();
 	private Sprite spikes = new Sprite(5, 5, "/spikes.png");
+	
 
 	public Play(int width, int height) {
 		super(width, height);
@@ -29,7 +31,7 @@ public class Play extends Screen {
 	public void start() {
 		InputHandler.register(this);
 		generateLevel(1.0f);
-		Game.getMusic("loop").play(true);
+		//Game.getMusic("loop").play(true);
 	}
 
 	public void stop() {
@@ -53,6 +55,7 @@ public class Play extends Screen {
 				heightMap.add(Integer.valueOf((int) (map[i] * getHeight() / 2) + 1));
 			}
 		}
+		
 		femBunny.setX(this.getWidth() - femBunny.getWidth());
 		femBunny.setFacingLeft(true);
 		int highest = 0;
@@ -62,6 +65,8 @@ public class Play extends Screen {
 			}
 		}
 		femBunny.setY(this.getHeight() - highest - femBunny.getHeight());
+		
+		
 	}
 
 	public float[] generateWhiteNoise(int width) {
