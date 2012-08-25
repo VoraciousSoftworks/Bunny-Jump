@@ -28,7 +28,7 @@ import com.voracious.project.screens.Temp;
 public class Game extends Canvas implements Runnable {
     private static final long serialVersionUID = 1L;
     public static final int FPS = 60; //FPS to limit the game to
-    public static final String NAME = "Game Template"; //Title of the game window
+    public static final String NAME = "Ludum Dare 24"; //Title of the game window
     public static final int WIDTH = 200; //Width of the canvas that will be scaled by the scale factor
     public static final int HEIGHT = 150; //Height of the canvas that will be scaled by the scale factor
     public static final int SCALE = 3; //Scale everything up by this factor, 3 means each drawn pixel is draw 3x3 
