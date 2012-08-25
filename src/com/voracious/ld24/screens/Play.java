@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.voracious.graphics.Game;
 import com.voracious.graphics.InputHandler;
 import com.voracious.graphics.components.Screen;
 import com.voracious.ld24.entities.Bunny;
@@ -127,12 +128,11 @@ public class Play extends Screen {
 	}
 
 	public void render() {
-		clear(0xffffff);
+		clear(0x2b2bAA);
 		for (int i = 0; i < this.getWidth(); i++) {
 			int height = heightMap.get(i + offsetX);
 			for (int j = 0; j < height; j++) {
-				this.setPixel(0xff00ff, i, 149 - j);
-				// System.out.println(j);
+				this.setPixel(0x2bAA2b, i, 149 - j);
 			}
 		}
 		
@@ -141,14 +141,27 @@ public class Play extends Screen {
 
 	public void tick() {
 		if (keysDown[1]) { // a
-			if (offsetX > 5) {
-				offsetX -= 5;
+			if (bunny.getX() > 15 || (offsetX == 0 && bunny.getX() > 0)) {
+				bunny.setX(bunny.getX() - 1);
+			}else if(offsetX > 0){
+				offsetX--;
 			}
 		} else if (keysDown[3]) { // d
-			if (offsetX < heightMap.size() - this.getWidth() - 5) {
-				offsetX += 5;
+			if (bunny.getX() < this.getWidth() - bunny.getWidth() - 15 || (offsetX == heightMap.size() - this.getWidth() && bunny.getX() < this.getWidth() - bunny.getWidth())) {
+				bunny.setX(bunny.getX() + 1);
+			}else if(offsetX < heightMap.size() - this.getWidth()){
+				offsetX++;
 			}
 		}
+		
+		int highest = 0;
+		for(int i=(int)bunny.getX() + offsetX; i<bunny.getWidth()+(int)bunny.getX()+offsetX; i++){
+			if(highest < heightMap.get(i)){
+				highest = heightMap.get(i);
+			}
+		}
+		
+		bunny.setY(getHeight() - highest - bunny.getHeight());
 	}
 
 	public void keyPressed(KeyEvent e) {
@@ -156,10 +169,12 @@ public class Play extends Screen {
 			keysDown[0] = true;
 		} else if (e.getKeyChar() == 'a') {
 			keysDown[1] = true;
+			bunny.setFacingLeft(true);
 		} else if (e.getKeyChar() == 's') {
 			keysDown[2] = true;
 		} else if (e.getKeyChar() == 'd') {
 			keysDown[3] = true;
+			bunny.setFacingLeft(false);
 		}
 	}
 

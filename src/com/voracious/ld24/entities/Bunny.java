@@ -13,8 +13,4 @@ public class Bunny extends Entity {
 	public Bunny() {
 		super(WIDTH, HEIGHT, numFrames, imageURI);
 	}
-
-	public void draw(Screen screen) {
-		draw(screen, false, false, false);
-	}
 }

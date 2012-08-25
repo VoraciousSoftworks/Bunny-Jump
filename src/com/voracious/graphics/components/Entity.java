@@ -26,7 +26,8 @@ public class Entity {
     private int tickCount = 0;
     private boolean play = false;
     private Sprite[][] frames;
-
+    private boolean facingLeft = false;
+    
     /**
      * Initializes an Entity from an image file
      * 
@@ -71,7 +72,7 @@ public class Entity {
      * @param screen
      */
     public void draw(Screen screen) {
-        draw(screen, false, false, false);
+        draw(screen, facingLeft, false, false);
     }
     
     /**
@@ -226,5 +227,9 @@ public class Entity {
 
     public void stop() {
         play = false;
+    }
+    
+    public void setFacingLeft(boolean facingLeft){
+    	this.facingLeft = facingLeft;
     }
 }
