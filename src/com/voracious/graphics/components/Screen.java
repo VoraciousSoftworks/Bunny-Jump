@@ -22,7 +22,7 @@ public class Screen {
     }
 
     public void setPixel(int color, int x, int y) {
-        if (color != -1 && !(width * y + x >= pixels.length)) {
+        if (color != -1 && 0 <= x && x < this.width && 0 <= y && y < this.height) {
             pixels[width * y + x] = color;
         }
     }
