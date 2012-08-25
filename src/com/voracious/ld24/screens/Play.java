@@ -8,6 +8,7 @@ import com.voracious.graphics.Game;
 import com.voracious.graphics.InputHandler;
 import com.voracious.graphics.components.Screen;
 import com.voracious.graphics.components.Sprite;
+import com.voracious.graphics.components.Text;
 import com.voracious.ld24.entities.Bunny;
 
 public class Play extends Screen {
@@ -149,6 +150,7 @@ public class Play extends Screen {
 		}
 		
 		bunny.draw(this);
+		new Text("test").draw(this, 0, 0);
 	}
 
 	public void tick() {
