@@ -29,7 +29,7 @@ public class Play extends Screen {
 	public void start() {
 		InputHandler.register(this);
 		generateLevel(1.0f);
-		//Game.getMusic("loop").play(true);
+		Game.getMusic("loop").play(true);
 	}
 
 	public void stop() {
