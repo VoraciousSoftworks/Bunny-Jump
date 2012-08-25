@@ -153,7 +153,7 @@ public class Play extends Screen {
 
 	public void tick() {
 		if (keysDown[1]) { // a
-			if (bunny.getX() > 15 || (offsetX == 0 && bunny.getX() > 0)) {
+			if (bunny.getX() > 45 || (offsetX == 0 && bunny.getX() > 0)) {
 				bunny.setX(bunny.getX() - bunny.getMoveSpeed());
 			}else if(offsetX > 0){
 				offsetX -= bunny.getMoveSpeed();
@@ -161,7 +161,7 @@ public class Play extends Screen {
 			
 			bunny.nextFrame();
 		} else if (keysDown[3]) { // d
-			if (bunny.getX() < this.getWidth() - bunny.getWidth() - 15 || (offsetX == heightMap.size() - this.getWidth() && bunny.getX() < this.getWidth() - bunny.getWidth())) {
+			if (bunny.getX() < this.getWidth() - bunny.getWidth() - 45 || (offsetX == heightMap.size() - this.getWidth() && bunny.getX() < this.getWidth() - bunny.getWidth())) {
 				bunny.setX(bunny.getX() + bunny.getMoveSpeed());
 			}else if(offsetX < heightMap.size() - this.getWidth()){
 				offsetX += bunny.getMoveSpeed();
