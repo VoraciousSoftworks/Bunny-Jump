@@ -12,7 +12,9 @@ import com.voracious.graphics.components.Sprite;
 import com.voracious.graphics.components.Text;
 import com.voracious.ld24.entities.Bunny;
 import com.voracious.ld24.entities.Jet;
+import com.voracious.ld24.entities.EvilHawk;
 import com.voracious.ld24.entities.Collectable;
+import com.voracious.graphics.components.*;
 
 public class Play extends Screen {
 
@@ -27,6 +29,8 @@ public class Play extends Screen {
 	private Bunny femBunny = new Bunny();
 	private Sprite spikes = new Sprite(5, 5, "/spikes.png");
 	private boolean selectingStats = false;
+	
+	private ArrayList<Entity> enemies;
 
 
 	public Play(int width, int height) {
@@ -38,7 +42,7 @@ public class Play extends Screen {
 		InputHandler.register(this);
 		MouseHandler.register(evolution);
 		generateLevel(1.0f);
-		Game.getMusic("loop").play(true);
+		//Game.getMusic("loop").play(true);
 	}
 
 	public void stop() {
