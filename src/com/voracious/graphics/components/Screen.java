@@ -7,7 +7,7 @@ import com.voracious.graphics.Game;
 
 /**
  * Canvas that can be drawn on and used by Game
- * Allows for Game to switch between seperate activities.
+ * Allows for Game to switch between separate activities.
  * 
  * @author Andrew Kallmeyer
  */
@@ -33,11 +33,11 @@ public class Screen {
             pixels[i] = color;
         }
     }
-
+    
     public void draw(int[] drawSurface) {
         int y = 0;
         int x = 0;
-        for (int i = 0; i < drawSurface.length; i++) {
+        for (int i = 0; i < ((drawSurface.length < pixels.length) ? drawSurface.length : pixels.length); i++) {
             int myIndex = width * (offsetY + y) + offsetX + x;
             if (pixels[myIndex] != -1) {
                 drawSurface[i] = pixels[myIndex];
@@ -46,6 +46,10 @@ public class Screen {
             if (x >= Game.WIDTH) {
                 y++;
                 x = 0;
+                
+                if(y >= Game.HEIGHT){
+                	
+                }
             }
         }
     }

@@ -43,7 +43,7 @@ public class Evolution extends Screen {
 	}
 
 	public void render() {
-		clear(0xffffff);
+		clear(-1);
 		titleText.draw(this, 5, 5);
 
 		moveText.draw(this, 15, 20);

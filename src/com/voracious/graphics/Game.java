@@ -80,7 +80,7 @@ public class Game extends Canvas implements Runnable {
         Game.registerMusic("loop", TinySound.loadMusic("/loop.wav"));
 
         //TODO: Register screens and set the initial screen
-        Game.registerScreen("play", new Play(Game.WIDTH, Game.HEIGHT));
+        Game.registerScreen("play", new Play(Game.WIDTH, Game.HEIGHT*10));
         Game.switchScreen("play");
 
         //TODO: Register sounds

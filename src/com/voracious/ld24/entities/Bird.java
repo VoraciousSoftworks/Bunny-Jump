@@ -16,7 +16,7 @@ public class Bird extends Entity {
 		rand = new Random();
 		
 		this.setX(playScreen.getWidth());
-		this.setY(rand.nextDouble()*30);
+		this.setY(rand.nextDouble()*playScreen.getHeight()*9/10 + 50);
 		
 		this.setFlySpeed(this.getFlySpeed()*((rand.nextDouble()+4)/2));
 		this.setFacingLeft(true);
