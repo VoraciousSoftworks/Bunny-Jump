@@ -4,14 +4,13 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.voracious.graphics.Game;
 import com.voracious.graphics.InputHandler;
 import com.voracious.graphics.MouseHandler;
 import com.voracious.graphics.components.Screen;
 import com.voracious.graphics.components.Sprite;
 import com.voracious.ld24.entities.Bunny;
-import com.voracious.ld24.entities.Jet;
 import com.voracious.ld24.entities.EvilHawk;
+import com.voracious.ld24.entities.Jet;
 
 public class Play extends Screen {
 
