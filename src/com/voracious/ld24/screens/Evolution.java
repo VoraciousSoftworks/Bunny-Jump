@@ -43,6 +43,7 @@ public class Evolution extends Screen {
 	}
 
 	public void render() {
+		play.setOffsetY(0);
 		clear(-1);
 		titleText.draw(this, 5, 5);
 
@@ -95,6 +96,7 @@ public class Evolution extends Screen {
 					} else if (action.equals("-jump")) {
 						bunny.setJumpPower(bunny.getJumpPower() - 1);
 					} else if (action.equals("done")) {
+						play.setOffsetY(play.getHeight() - Game.HEIGHT);
 						play.setSelectingStats(false);
 					}
 				}

@@ -40,7 +40,15 @@ public class Play extends Screen {
 		InputHandler.register(this);
 		MouseHandler.register(evolution);
 		generateLevel(1.0f);
-		bunny.setY(Game.HEIGHT);
+		offsetX = 0;
+		int highest = 0;
+		for (int i = (int) bunny.getX() + offsetX; i < bunny.getWidth()
+				+ (int) bunny.getX() + offsetX; i++) {
+			if (highest < heightMap.get(i)) {
+				highest = heightMap.get(i);
+			}
+		}
+		bunny.setY(this.getHeight() - highest - bunny.getHeight());
 		setOffsetY(this.getHeight() - Game.HEIGHT);
 		// Game.getMusic("loop").play(true);
 	}
@@ -164,7 +172,6 @@ public class Play extends Screen {
 		if (selectingStats) {
 			evolution.render();
 			evolution.draw(this.getPixels());
-			setOffsetY(0);
 		} else {
 			int counter = 5;
 			for (int i = 0; i < this.getWidth(); i++) {
@@ -230,6 +237,7 @@ public class Play extends Screen {
 				}
 				bunny.nextFrame();
 			}
+			
 			if (getOffsetY() < getHeight() - Game.HEIGHT - bunny.getVelY()) {
 				if (bunny.getY() < Game.HEIGHT + 45 && bunny.getVelY() < 0) {
 					setOffsetY((int) (getOffsetY() + bunny.getVelY()));
@@ -287,7 +295,7 @@ public class Play extends Screen {
 				endRun();
 			}
 
-			if (rand.nextInt(heightMap.size()) < Math.sqrt(offsetX / 5)) {
+			if (rand.nextInt(heightMap.size()) < Math.sqrt(offsetX)*2) {
 				if (offsetX > heightMap.size() / 2 && rand.nextInt(3) < 2) {
 					jets.add(new Jet(this));
 				} else {
@@ -355,20 +363,23 @@ public class Play extends Screen {
 	public void endRun() {
 		setSelectingStats(true);
 		bunny.setX(0);
-		bunny.setY(Game.HEIGHT);
 		offsetX = 0;
 		heightMap.clear();
 		hawks.clear();
 		jets.clear();
 		collectables.clear();
 		generateLevel(1.0f);
+		int highest = 0;
+		for (int i = 0; i < bunny.getWidth(); i++) {
+			if (highest < heightMap.get(i)) {
+				highest = heightMap.get(i);
+			}
+		}
+		bunny.setY(this.getHeight() - highest - bunny.getHeight());
 	}
 
 	public void setSelectingStats(boolean selecting) {
 		selectingStats = selecting;
-		if(selecting == false){
-			setOffsetY(this.getHeight() - Game.HEIGHT);
-		}
 	}
 
 	public boolean isSelectingStats() {
