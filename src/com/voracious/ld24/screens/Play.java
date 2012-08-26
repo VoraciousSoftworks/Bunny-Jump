@@ -28,7 +28,6 @@ public class Play extends Screen {
 	private ArrayList<EvilHawk> hawks = new ArrayList<EvilHawk>();
 	private ArrayList<Jet> jets = new ArrayList<Jet>();
 
-
 	public Play(int width, int height) {
 		super(width, height);
 		evolution = new Evolution(width, height, bunny, this);
@@ -38,7 +37,7 @@ public class Play extends Screen {
 		InputHandler.register(this);
 		MouseHandler.register(evolution);
 		generateLevel(1.0f);
-		//Game.getMusic("loop").play(true);
+		// Game.getMusic("loop").play(true);
 	}
 
 	public void stop() {
@@ -63,7 +62,7 @@ public class Play extends Screen {
 						.valueOf((int) (map[i] * getHeight() / 2) + 1));
 			}
 		}
-		
+
 		femBunny.setX(this.getWidth() - femBunny.getWidth());
 		femBunny.setFacingLeft(true);
 		int highest = 0;
@@ -183,16 +182,16 @@ public class Play extends Screen {
 				femBunny.draw(this);
 			}
 			bunny.draw(this);
-			
-			for(Jet jet : jets){
+
+			for (Jet jet : jets) {
 				jet.draw(this);
 			}
-			
-			for(EvilHawk hawk : hawks){
+
+			for (EvilHawk hawk : hawks) {
 				hawk.draw(this);
 			}
 		}
-		
+
 	}
 
 	public void tick() {
@@ -204,7 +203,7 @@ public class Play extends Screen {
 						|| (offsetX == 0 && bunny.getX() - bunny.getMoveSpeed() > 0)) {
 					bunny.setX(bunny.getX() - bunny.getMoveSpeed());
 				} else if (offsetX - bunny.getMoveSpeed() > 0) {
-					offsetX -= bunny.getMoveSpeed();
+					setOffsetX((int) (getOffsetX() - bunny.getMoveSpeed()));
 				} else {
 					offsetX = 0;
 				}
@@ -218,9 +217,9 @@ public class Play extends Screen {
 					bunny.setX(bunny.getX() + bunny.getMoveSpeed());
 				} else if (offsetX < heightMap.size() - this.getWidth()
 						- bunny.getMoveSpeed()) {
-					offsetX += bunny.getMoveSpeed();
+					setOffsetX((int) (getOffsetX() + bunny.getMoveSpeed()));
 				} else {
-					offsetX = heightMap.size() - this.getWidth();
+					setOffsetX(heightMap.size() - this.getWidth());
 				}
 				bunny.nextFrame();
 			}
@@ -272,12 +271,28 @@ public class Play extends Screen {
 				}
 			}
 			
+			ArrayList<Jet> jetsToRemove = new ArrayList<Jet>();
 			for(Jet jet : jets){
 				jet.tick();
+				if(jet.getX() < getOffsetX()*-1){
+					jetsToRemove.add(jet);
+				}
 			}
 			
+			for(Jet jet: jetsToRemove){
+				jets.remove(jet);
+			}
+			
+			ArrayList<EvilHawk> hawksToRemove = new ArrayList<EvilHawk>();
 			for(EvilHawk hawk : hawks){
 				hawk.tick();
+				if(hawk.getX() < getOffsetX()*-1){
+					hawksToRemove.add(hawk);
+				}
+			}
+			
+			for(EvilHawk hawk: hawksToRemove){
+				hawks.remove(hawk);
 			}
 		}
 	}
@@ -296,7 +311,7 @@ public class Play extends Screen {
 		} else if (e.getKeyChar() == 'd') {
 			keysDown[3] = true;
 			bunny.setFacingLeft(false);
-		}else if(e.getKeyChar() == 'k'){
+		} else if (e.getKeyChar() == 'k') {
 			endRun();
 		}
 	}
@@ -312,8 +327,8 @@ public class Play extends Screen {
 			keysDown[3] = false;
 		}
 	}
-	
-	public void endRun(){
+
+	public void endRun() {
 		setSelectingStats(true);
 		bunny.setX(0);
 		bunny.setY(0);
@@ -321,12 +336,27 @@ public class Play extends Screen {
 		heightMap.clear();
 		generateLevel(1.0f);
 	}
-	
-	public void setSelectingStats(boolean selecting){
+
+	public void setSelectingStats(boolean selecting) {
 		selectingStats = selecting;
 	}
-	
-	public boolean isSelectingStats(){
+
+	public boolean isSelectingStats() {
 		return selectingStats;
+	}
+
+	public int getOffsetX() {
+		return offsetX;
+	}
+
+	public void setOffsetX(int offset) {
+		for (EvilHawk hawk : hawks) {
+			hawk.setX(hawk.getX() + offsetX - offset);
+		}
+		for (Jet jet : jets) {
+			jet.setX(jet.getX() + offsetX - offset);
+		}
+
+		this.offsetX = offset;
 	}
 }
