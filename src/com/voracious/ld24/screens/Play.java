@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.voracious.graphics.Game;
 import com.voracious.graphics.InputHandler;
 import com.voracious.graphics.MouseHandler;
 import com.voracious.graphics.components.Screen;
@@ -33,13 +34,15 @@ public class Play extends Screen {
 
 	public Play(int width, int height) {
 		super(width, height);
-		evolution = new Evolution(width, height, bunny, this);
+		evolution = new Evolution(width, Game.HEIGHT, bunny, this);
 	}
 
 	public void start() {
 		InputHandler.register(this);
 		MouseHandler.register(evolution);
 		generateLevel(1.0f);
+		bunny.setY(Game.HEIGHT);
+		setOffsetY(this.getHeight() - Game.HEIGHT);
 		// Game.getMusic("loop").play(true);
 	}
 
@@ -64,7 +67,7 @@ public class Play extends Screen {
 				pitfall = rand.nextInt(size / 10) + i - 50;
 			} else {
 				heightMap.add(Integer
-						.valueOf((int) (map[i] * getHeight() / 2) + 1));
+						.valueOf((int) (map[i] * Game.HEIGHT / 2) + 1));
 			}
 			//This block generates collectables psuedorandomly and randomly picks their value
 			// on a weighted scale.
@@ -193,12 +196,13 @@ public class Play extends Screen {
 		if (selectingStats) {
 			evolution.render();
 			evolution.draw(this.getPixels());
+			setOffsetY(0);
 		} else {
 			int counter = 5;
 			for (int i = 0; i < this.getWidth(); i++) {
 				int height = heightMap.get(i + offsetX);
 				for (int j = 0; j < height; j++) {
-					this.setPixel(0x2bAA2b, i, 149 - j);
+					this.setPixel(0x2bAA2b, i, this.getHeight() - j);
 				}
 				if (height == 0) {
 					if (counter == 5) {
@@ -209,6 +213,7 @@ public class Play extends Screen {
 					counter++;
 				}
 			}
+
 			if (offsetX > heightMap.size() - this.getWidth()
 					- femBunny.getWidth()) {
 				femBunny.setX((this.getWidth() - femBunny.getWidth())
@@ -261,6 +266,13 @@ public class Play extends Screen {
 				}
 				bunny.nextFrame();
 			}
+			if (getOffsetY() < getHeight() - Game.HEIGHT - bunny.getVelY()) {
+				if (bunny.getY() < Game.HEIGHT + 45 && bunny.getVelY() < 0) {
+					setOffsetY((int) (getOffsetY() + bunny.getVelY()));
+				} else if (bunny.getY() > Game.HEIGHT - 45 && bunny.getVelY() > 0) {
+					setOffsetY((int) (getOffsetY() + bunny.getVelY()));
+				}
+			}
 
 			int highest = 0;
 			for (int i = (int) bunny.getX() + offsetX; i < bunny.getWidth()
@@ -271,65 +283,75 @@ public class Play extends Screen {
 			}
 
 			bunny.tick();
-			if (bunny.isFalling() == true && bunny.getY() > getHeight() - highest - bunny.getHeight() - bunny.getVelY()) {
-				System.out.println(bunny.getY() - getHeight() - highest - bunny.getHeight());
-				if(getHeight() - highest - bunny.getHeight() - bunny.getY() > -5){
+			if (bunny.isFalling() == true
+					&& bunny.getY() > getHeight() - highest - bunny.getHeight()
+							- bunny.getVelY()) {
+				if (getHeight() - highest - bunny.getHeight() - bunny.getY() > -5) {
 					bunny.setFalling(false);
 					bunny.setVelY(0.0);
-				}else{
-					if(heightMap.get((int) (bunny.getX() + offsetX + bunny.getMoveSpeed())) < heightMap.get((int) (bunny.getX() + offsetX - bunny.getMoveSpeed()) >=0 ? (int) (bunny.getX() + offsetX - bunny.getMoveSpeed()) : 0)){
+				} else {
+					if (heightMap.get((int) (bunny.getX() + offsetX + bunny
+							.getMoveSpeed())) < heightMap
+							.get((int) (bunny.getX() + offsetX - bunny
+									.getMoveSpeed()) >= 0 ? (int) (bunny.getX()
+									+ offsetX - bunny.getMoveSpeed()) : 0)) {
 						bunny.setX(bunny.getX() + bunny.getMoveSpeed());
-					}else{
+					} else {
 						bunny.setX(bunny.getX() - bunny.getMoveSpeed());
 					}
 				}
 			} else if (!bunny.isFalling()) {
-				if(getHeight() - highest - bunny.getHeight() - bunny.getY() > 10){
+				if (getHeight() - highest - bunny.getHeight() - bunny.getY() > 10) {
 					bunny.setFalling(true);
-				}else if(getHeight() - highest - bunny.getHeight() - bunny.getY() > -5){
+				} else if (getHeight() - highest - bunny.getHeight()
+						- bunny.getY() > -5) {
 					bunny.setY(getHeight() - highest - bunny.getHeight());
-				}else{
-					if(heightMap.get((int) (bunny.getX() + offsetX + bunny.getMoveSpeed())) < heightMap.get((int) (bunny.getX() + offsetX - bunny.getMoveSpeed()) >=0 ? (int) (bunny.getX() + offsetX - bunny.getMoveSpeed()) : 0)){
+				} else {
+					if (heightMap.get((int) (bunny.getX() + offsetX + bunny
+							.getMoveSpeed())) < heightMap
+							.get((int) (bunny.getX() + offsetX - bunny
+									.getMoveSpeed()) >= 0 ? (int) (bunny.getX()
+									+ offsetX - bunny.getMoveSpeed()) : 0)) {
 						bunny.setX(bunny.getX() + bunny.getMoveSpeed());
-					}else{
+					} else {
 						bunny.setX(bunny.getX() - bunny.getMoveSpeed());
 					}
 				}
 			}
-			
-			if(bunny.getY() >= this.getHeight() - bunny.getHeight()){
+
+			if (bunny.getY() >= this.getHeight() - bunny.getHeight()) {
 				endRun();
 			}
-			
-			if(rand.nextInt(heightMap.size()) < Math.sqrt(offsetX/5)){
-				if(offsetX > heightMap.size() / 2 && rand.nextInt(3) < 2){
+
+			if (rand.nextInt(heightMap.size()) < Math.sqrt(offsetX / 5)) {
+				if (offsetX > heightMap.size() / 2 && rand.nextInt(3) < 2) {
 					jets.add(new Jet(this));
-				}else{
+				} else {
 					hawks.add(new EvilHawk(this));
 				}
 			}
-			
+
 			ArrayList<Jet> jetsToRemove = new ArrayList<Jet>();
-			for(Jet jet : jets){
+			for (Jet jet : jets) {
 				jet.tick();
-				if(jet.getX() < getOffsetX()*-1){
+				if (jet.getX() < getOffsetX() * -1) {
 					jetsToRemove.add(jet);
 				}
 			}
-			
-			for(Jet jet: jetsToRemove){
+
+			for (Jet jet : jetsToRemove) {
 				jets.remove(jet);
 			}
-			
+
 			ArrayList<EvilHawk> hawksToRemove = new ArrayList<EvilHawk>();
-			for(EvilHawk hawk : hawks){
+			for (EvilHawk hawk : hawks) {
 				hawk.tick();
-				if(hawk.getX() < getOffsetX()*-1){
+				if (hawk.getX() < getOffsetX() * -1) {
 					hawksToRemove.add(hawk);
 				}
 			}
-			
-			for(EvilHawk hawk: hawksToRemove){
+
+			for (EvilHawk hawk : hawksToRemove) {
 				hawks.remove(hawk);
 			}
 		}
@@ -369,7 +391,7 @@ public class Play extends Screen {
 	public void endRun() {
 		setSelectingStats(true);
 		bunny.setX(0);
-		bunny.setY(0);
+		bunny.setY(Game.HEIGHT);
 		offsetX = 0;
 		heightMap.clear();
 		hawks.clear();
@@ -380,6 +402,9 @@ public class Play extends Screen {
 
 	public void setSelectingStats(boolean selecting) {
 		selectingStats = selecting;
+		if(selecting == false){
+			setOffsetY(this.getHeight() - Game.HEIGHT);
+		}
 	}
 
 	public boolean isSelectingStats() {
@@ -397,10 +422,10 @@ public class Play extends Screen {
 		for (Jet jet : jets) {
 			jet.setX(jet.getX() + offsetX - offset);
 		}
-		for (Collectable collect: collectables){
+		for (Collectable collect : collectables) {
 			collect.setX(collect.getX() + offsetX - offset);
 		}
 
-		this.offsetX = offset;
+		offsetX = offset;
 	}
 }
