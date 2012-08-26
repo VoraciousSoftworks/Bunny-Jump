@@ -9,10 +9,9 @@ import com.voracious.graphics.InputHandler;
 import com.voracious.graphics.MouseHandler;
 import com.voracious.graphics.components.Screen;
 import com.voracious.graphics.components.Sprite;
-import com.voracious.graphics.components.Text;
 import com.voracious.ld24.entities.Bunny;
 import com.voracious.ld24.entities.Jet;
-import com.voracious.ld24.entities.Collectable;
+import com.voracious.ld24.entities.EvilHawk;
 
 public class Play extends Screen {
 
@@ -27,6 +26,8 @@ public class Play extends Screen {
 	private Bunny femBunny = new Bunny();
 	private Sprite spikes = new Sprite(5, 5, "/spikes.png");
 	private boolean selectingStats = false;
+	private ArrayList<EvilHawk> hawks = new ArrayList<EvilHawk>();
+	private ArrayList<Jet> jets = new ArrayList<Jet>();
 
 
 	public Play(int width, int height) {
@@ -38,7 +39,7 @@ public class Play extends Screen {
 		InputHandler.register(this);
 		MouseHandler.register(evolution);
 		generateLevel(1.0f);
-		Game.getMusic("loop").play(true);
+		//Game.getMusic("loop").play(true);
 	}
 
 	public void stop() {
@@ -48,7 +49,7 @@ public class Play extends Screen {
 	public void generateLevel(float difficulty) {
 		int size = (int) (difficulty * 0xfff);
 
-		int pitfall = rand.nextInt(size / 10);
+		int pitfall = rand.nextInt(size / 10) + 50;
 		float[] map = generatePerlinNoise(generateWhiteNoise(size), 9);
 		for (int i = 0; i < size; i++) {
 			if (i == pitfall) {
@@ -57,7 +58,7 @@ public class Play extends Screen {
 					heightMap.add(0);
 				}
 				i += pitfallSize;
-				pitfall = rand.nextInt(size / 10) + i;
+				pitfall = rand.nextInt(size / 10) + i - 50;
 			} else {
 				heightMap.add(Integer
 						.valueOf((int) (map[i] * getHeight() / 2) + 1));
@@ -183,7 +184,16 @@ public class Play extends Screen {
 				femBunny.draw(this);
 			}
 			bunny.draw(this);
+			
+			for(Jet jet : jets){
+				jet.draw(this);
+			}
+			
+			for(EvilHawk hawk : hawks){
+				hawk.draw(this);
+			}
 		}
+		
 	}
 
 	public void tick() {
@@ -227,7 +237,7 @@ public class Play extends Screen {
 			bunny.tick();
 			if (bunny.isFalling() == true && bunny.getY() > getHeight() - highest - bunny.getHeight() - bunny.getVelY()) {
 				System.out.println(bunny.getY() - getHeight() - highest - bunny.getHeight());
-				if(getHeight() - highest - bunny.getHeight() - bunny.getY() > -3){
+				if(getHeight() - highest - bunny.getHeight() - bunny.getY() > -5){
 					bunny.setFalling(false);
 					bunny.setVelY(0.0);
 				}else{
@@ -240,7 +250,7 @@ public class Play extends Screen {
 			} else if (!bunny.isFalling()) {
 				if(getHeight() - highest - bunny.getHeight() - bunny.getY() > 10){
 					bunny.setFalling(true);
-				}else if(getHeight() - highest - bunny.getHeight() - bunny.getY() > -3){
+				}else if(getHeight() - highest - bunny.getHeight() - bunny.getY() > -5){
 					bunny.setY(getHeight() - highest - bunny.getHeight());
 				}else{
 					if(heightMap.get((int) (bunny.getX() + offsetX + bunny.getMoveSpeed())) < heightMap.get((int) (bunny.getX() + offsetX - bunny.getMoveSpeed()) >=0 ? (int) (bunny.getX() + offsetX - bunny.getMoveSpeed()) : 0)){
@@ -253,6 +263,22 @@ public class Play extends Screen {
 			
 			if(bunny.getY() >= this.getHeight() - bunny.getHeight()){
 				endRun();
+			}
+			
+			if(rand.nextInt(heightMap.size()) < Math.sqrt(offsetX/5)){
+				if(offsetX > heightMap.size() / 2 && rand.nextInt(3) < 2){
+					jets.add(new Jet(this));
+				}else{
+					hawks.add(new EvilHawk(this));
+				}
+			}
+			
+			for(Jet jet : jets){
+				jet.tick();
+			}
+			
+			for(EvilHawk hawk : hawks){
+				hawk.tick();
 			}
 		}
 	}
