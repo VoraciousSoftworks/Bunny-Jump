@@ -11,6 +11,8 @@ import com.voracious.graphics.components.Screen;
 import com.voracious.graphics.components.Sprite;
 import com.voracious.graphics.components.Text;
 import com.voracious.ld24.entities.Bunny;
+import com.voracious.ld24.entities.Jet;
+import com.voracious.ld24.entities.Collectable;
 
 public class Play extends Screen {
 
@@ -25,6 +27,7 @@ public class Play extends Screen {
 	private Bunny femBunny = new Bunny();
 	private Sprite spikes = new Sprite(5, 5, "/spikes.png");
 	private boolean selectingStats = false;
+
 
 	public Play(int width, int height) {
 		super(width, height);
@@ -60,6 +63,7 @@ public class Play extends Screen {
 						.valueOf((int) (map[i] * getHeight() / 2) + 1));
 			}
 		}
+		
 		femBunny.setX(this.getWidth() - femBunny.getWidth());
 		femBunny.setFacingLeft(true);
 		int highest = 0;
