@@ -30,7 +30,8 @@ public class Play extends Screen {
 	private ArrayList<EvilHawk> hawks = new ArrayList<EvilHawk>();
 	private ArrayList<Jet> jets = new ArrayList<Jet>();
 	private ArrayList<Collectable> collectables = new ArrayList<Collectable>();
-	private int collectableSpawnRate = 10;
+	private int collectableSpawnRate = 100;
+	private int EP = 0;
 
 	public Play(int width, int height) {
 		super(width, height);
@@ -55,7 +56,7 @@ public class Play extends Screen {
 
 		int pitfall = rand.nextInt(size / 10) + 50;
 		int collect = rand.nextInt(size / collectableSpawnRate) + 20;
-		int collectLevel = rand.nextInt(9);
+		int collectLevel = rand.nextInt(10);
 		float[] map = generatePerlinNoise(generateWhiteNoise(size), 9);
 		for (int i = 0; i < size; i++) {
 			if (i == pitfall) {
@@ -63,38 +64,39 @@ public class Play extends Screen {
 				for (int j = 0; j < pitfallSize; j++) {
 					heightMap.add(0);
 				}
-				i += pitfallSize;
+				i += pitfallSize - 1;
 				pitfall = rand.nextInt(size / 10) + i - 50;
+				continue;
 			} else {
 				heightMap.add(Integer
 						.valueOf((int) (map[i] * Game.HEIGHT / 2) + 1));
 			}
 			//This block generates collectables psuedorandomly and randomly picks their value
 			// on a weighted scale.
-			if(i == collect){
+			if(i >= collect){
 				if(collectLevel <= 5){
 					Collectable temp = new Collectable(1);
 					temp.setX(i);
-					temp.setY(rand.nextDouble() * -heightMap.get(i));
+					temp.setY(rand.nextDouble() * (this.getHeight() - heightMap.get(i) + 3));
 					collectables.add(temp);
 					collect = rand.nextInt(size / collectableSpawnRate) + i - 20;
-					collectLevel = rand.nextInt(9);
+					collectLevel = rand.nextInt(10);
 				}
 				else if(collectLevel > 5 && collectLevel <= 8){
 					Collectable temp = new Collectable(2);
 					temp.setX(i);
-					temp.setY(rand.nextDouble() * -heightMap.get(i));
+					temp.setY(rand.nextDouble() * (this.getHeight() - heightMap.get(i) + 3));
 					collectables.add(temp);
 					collect = rand.nextInt(size / collectableSpawnRate) + i - 20;
-					collectLevel = rand.nextInt(9);
+					collectLevel = rand.nextInt(10);
 				}
 				else if(collectLevel == 9){
-					Collectable temp = new Collectable(2);
+					Collectable temp = new Collectable(3);
 					temp.setX(i);
-					temp.setY(rand.nextDouble() * -heightMap.get(i));
+					temp.setY(rand.nextDouble() * (this.getHeight() - heightMap.get(i) + 3));
 					collectables.add(temp);
 					collect = rand.nextInt(size / collectableSpawnRate) + i - 20;
-					collectLevel = rand.nextInt(9);
+					collectLevel = rand.nextInt(10);
 				}
 			}
 			
@@ -322,6 +324,18 @@ public class Play extends Screen {
 			if (bunny.getY() >= this.getHeight() - bunny.getHeight()) {
 				endRun();
 			}
+			
+			ArrayList<Collectable> collectsToRemove = new ArrayList<Collectable>();
+			for(Collectable collect : collectables){
+				if(bunny.hitTest(collect)){
+					EP+= collect.getValue();
+					collectsToRemove.add(collect);
+				}
+			}
+			
+			for(Collectable collect : collectsToRemove){
+				collectables.remove(collect);
+			}
 
 			if (rand.nextInt(heightMap.size()) < Math.sqrt(offsetX / 5)) {
 				if (offsetX > heightMap.size() / 2 && rand.nextInt(3) < 2) {
@@ -353,6 +367,10 @@ public class Play extends Screen {
 
 			for (EvilHawk hawk : hawksToRemove) {
 				hawks.remove(hawk);
+			}
+			
+			for (Collectable collectable : collectables){
+				collectable.tick();
 			}
 		}
 	}
@@ -427,5 +445,13 @@ public class Play extends Screen {
 		}
 
 		offsetX = offset;
+	}
+	
+	public int getEP(){
+		return EP;
+	}
+	
+	public void setEP(int p){
+		EP = p;
 	}
 }

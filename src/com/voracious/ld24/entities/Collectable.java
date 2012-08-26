@@ -24,8 +24,8 @@ public class Collectable extends Entity{
 		}
 		if(level == 3){
 			this.setCurrentAnimation(2);
-			this.play();
 			value = 3;
+			this.play();
 		}
 	}
 	

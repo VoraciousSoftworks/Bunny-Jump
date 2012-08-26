@@ -302,4 +302,8 @@ public class Text extends Sprite {
 	public Color getColor() {
 		return myColor;
 	}
+	
+	public void setMyText(String text){
+		myText = text;
+	}
 }

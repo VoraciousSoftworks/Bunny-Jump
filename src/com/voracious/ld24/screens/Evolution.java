@@ -20,12 +20,14 @@ public class Evolution extends Screen {
 	private Text titleText = new Text("Evolve");
 	private Text moveText = new Text("Move speed");
 	private Text jumpText = new Text("Jump power");
+	private int evePoints = 0;
 	private ArrayList<Button> buttons = new ArrayList<Button>();
 
 	public Evolution(int width, int height, Bunny bunny, Play play) {
 		super(width, height);
 		this.bunny = bunny;
 		this.play = play;
+		
 
 		int buttonWidth = plusText.getWidth() + buttonPadding * 2;
 		int buttonHeight = plusText.getHeight() + buttonPadding * 2;
@@ -42,6 +44,8 @@ public class Evolution extends Screen {
 				"done", "done"));
 	}
 
+	//TODO Make it so that adding to stats can only use the number of evolution points at
+	// the bottom of the screen/
 	public void render() {
 		clear(-1);
 		titleText.draw(this, 5, 5);
@@ -59,6 +63,10 @@ public class Evolution extends Screen {
 		drawButton(buttons.get(3));
 
 		drawButton(buttons.get(4));
+		
+		evePoints = play.getEP();
+		Text evolvePoints = new Text("Evolution Points: " + evePoints);
+		evolvePoints.draw(this, 5, this.getHeight() - Text.FONT_HEIGHT);
 	}
 
 	public void drawButton(Button button) {
