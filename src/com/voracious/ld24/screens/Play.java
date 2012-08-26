@@ -29,6 +29,7 @@ public class Play extends Screen {
 	private ArrayList<EvilHawk> hawks = new ArrayList<EvilHawk>();
 	private ArrayList<Jet> jets = new ArrayList<Jet>();
 	private ArrayList<Collectable> collectables = new ArrayList<Collectable>();
+	private int collectableSpawnRate = 10;
 
 	public Play(int width, int height) {
 		super(width, height);
@@ -50,6 +51,8 @@ public class Play extends Screen {
 		int size = (int) (difficulty * 0xfff);
 
 		int pitfall = rand.nextInt(size / 10) + 50;
+		int collect = rand.nextInt(size / collectableSpawnRate) + 20;
+		int collectLevel = rand.nextInt(9);
 		float[] map = generatePerlinNoise(generateWhiteNoise(size), 9);
 		for (int i = 0; i < size; i++) {
 			if (i == pitfall) {
@@ -63,6 +66,35 @@ public class Play extends Screen {
 				heightMap.add(Integer
 						.valueOf((int) (map[i] * getHeight() / 2) + 1));
 			}
+			//This block generates collectables psuedorandomly and randomly picks their value
+			// on a weighted scale.
+			if(i == collect){
+				if(collectLevel <= 5){
+					Collectable temp = new Collectable(1);
+					temp.setX(i);
+					temp.setY(rand.nextDouble() * -heightMap.get(i));
+					collectables.add(temp);
+					collect = rand.nextInt(size / collectableSpawnRate) + i - 20;
+					collectLevel = rand.nextInt(9);
+				}
+				else if(collectLevel > 5 && collectLevel <= 8){
+					Collectable temp = new Collectable(2);
+					temp.setX(i);
+					temp.setY(rand.nextDouble() * -heightMap.get(i));
+					collectables.add(temp);
+					collect = rand.nextInt(size / collectableSpawnRate) + i - 20;
+					collectLevel = rand.nextInt(9);
+				}
+				else if(collectLevel == 9){
+					Collectable temp = new Collectable(2);
+					temp.setX(i);
+					temp.setY(rand.nextDouble() * -heightMap.get(i));
+					collectables.add(temp);
+					collect = rand.nextInt(size / collectableSpawnRate) + i - 20;
+					collectLevel = rand.nextInt(9);
+				}
+			}
+			
 		}
 
 		femBunny.setX(this.getWidth() - femBunny.getWidth());
@@ -191,6 +223,10 @@ public class Play extends Screen {
 
 			for (EvilHawk hawk : hawks) {
 				hawk.draw(this);
+			}
+			
+			for(Collectable collectable : collectables){
+				collectable.draw(this);
 			}
 		}
 
