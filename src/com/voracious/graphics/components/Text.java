@@ -47,7 +47,7 @@ public class Text extends Sprite {
 
 	public static final int DEF_SIZE = 8;
 	public static final int DEF_SPACING = 1;
-	public static final Color DEF_COLOR = Color.BLACK;
+	public static final Color DEF_COLOR = Color.WHITE;
 
 	private String myText;
 	private int mySpacing;
@@ -72,6 +72,10 @@ public class Text extends Sprite {
 		mySpacing = DEF_SPACING;
 		mySize = DEF_SIZE;
 		myColor = DEF_COLOR;
+	}
+	
+	public Text(String text, Color color) {
+		super(text.length()*(FONT_WIDTH + (DEF_SIZE - FONT_HEIGHT)) + (text.length()-1)*DEF_SPACING, DEF_SIZE,  parseString(text, DEF_SIZE, DEF_SPACING, color));
 	}
 
 	/**
