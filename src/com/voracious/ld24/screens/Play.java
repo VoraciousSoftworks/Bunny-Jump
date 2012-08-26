@@ -11,6 +11,7 @@ import com.voracious.graphics.components.Sprite;
 import com.voracious.ld24.entities.Bunny;
 import com.voracious.ld24.entities.EvilHawk;
 import com.voracious.ld24.entities.Jet;
+import com.voracious.ld24.entities.Collectable;
 
 public class Play extends Screen {
 
@@ -27,6 +28,7 @@ public class Play extends Screen {
 	private boolean selectingStats = false;
 	private ArrayList<EvilHawk> hawks = new ArrayList<EvilHawk>();
 	private ArrayList<Jet> jets = new ArrayList<Jet>();
+	private ArrayList<Collectable> collectables = new ArrayList<Collectable>();
 
 	public Play(int width, int height) {
 		super(width, height);
@@ -334,6 +336,9 @@ public class Play extends Screen {
 		bunny.setY(0);
 		offsetX = 0;
 		heightMap.clear();
+		hawks.clear();
+		jets.clear();
+		collectables.clear();
 		generateLevel(1.0f);
 	}
 
@@ -355,6 +360,9 @@ public class Play extends Screen {
 		}
 		for (Jet jet : jets) {
 			jet.setX(jet.getX() + offsetX - offset);
+		}
+		for (Collectable collect: collectables){
+			collect.setX(collect.getX() + offsetX - offset);
 		}
 
 		this.offsetX = offset;
