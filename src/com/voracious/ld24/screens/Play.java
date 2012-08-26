@@ -42,7 +42,7 @@ public class Play extends Screen {
 		InputHandler.register(this);
 		MouseHandler.register(evolution);
 		generateLevel(1.0f);
-		//Game.getMusic("loop").play(true);
+		Game.getMusic("loop").play(true);
 	}
 
 	public void stop() {
