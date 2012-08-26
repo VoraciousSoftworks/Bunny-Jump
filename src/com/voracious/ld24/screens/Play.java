@@ -179,7 +179,6 @@ public class Play extends Screen {
 				femBunny.draw(this);
 			}
 			bunny.draw(this);
-			new Text("test").draw(this, 0, 0);
 		}
 	}
 
@@ -222,13 +221,34 @@ public class Play extends Screen {
 			}
 
 			bunny.tick();
-			if (bunny.isFalling() == true
-					&& bunny.getY() > getHeight() - highest - bunny.getHeight()
-							- bunny.getVelY()) {
-				bunny.setFalling(false);
-				bunny.setVelY(0.0);
+			if (bunny.isFalling() == true && bunny.getY() > getHeight() - highest - bunny.getHeight() - bunny.getVelY()) {
+				System.out.println(bunny.getY() - getHeight() - highest - bunny.getHeight());
+				if(getHeight() - highest - bunny.getHeight() - bunny.getY() > -3){
+					bunny.setFalling(false);
+					bunny.setVelY(0.0);
+				}else{
+					if(heightMap.get((int) (bunny.getX() + offsetX + bunny.getMoveSpeed())) < heightMap.get((int) (bunny.getX() + offsetX - bunny.getMoveSpeed()) >=0 ? (int) (bunny.getX() + offsetX - bunny.getMoveSpeed()) : 0)){
+						bunny.setX(bunny.getX() + bunny.getMoveSpeed());
+					}else{
+						bunny.setX(bunny.getX() - bunny.getMoveSpeed());
+					}
+				}
 			} else if (!bunny.isFalling()) {
-				bunny.setY(getHeight() - highest - bunny.getHeight());
+				if(getHeight() - highest - bunny.getHeight() - bunny.getY() > 10){
+					bunny.setFalling(true);
+				}else if(getHeight() - highest - bunny.getHeight() - bunny.getY() > -3){
+					bunny.setY(getHeight() - highest - bunny.getHeight());
+				}else{
+					if(heightMap.get((int) (bunny.getX() + offsetX + bunny.getMoveSpeed())) < heightMap.get((int) (bunny.getX() + offsetX - bunny.getMoveSpeed()) >=0 ? (int) (bunny.getX() + offsetX - bunny.getMoveSpeed()) : 0)){
+						bunny.setX(bunny.getX() + bunny.getMoveSpeed());
+					}else{
+						bunny.setX(bunny.getX() - bunny.getMoveSpeed());
+					}
+				}
+			}
+			
+			if(bunny.getY() >= this.getHeight() - bunny.getHeight()){
+				endRun();
 			}
 		}
 	}
@@ -267,6 +287,7 @@ public class Play extends Screen {
 	public void endRun(){
 		setSelectingStats(true);
 		bunny.setX(0);
+		bunny.setY(0);
 		offsetX = 0;
 		heightMap.clear();
 		generateLevel(1.0f);
