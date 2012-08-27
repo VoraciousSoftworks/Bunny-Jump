@@ -17,7 +17,7 @@ import com.voracious.ld24.entities.Collectable;
 
 public class Play extends Screen {
 
-	public static final double gravityPower = 1.0;
+	public static final double gravityPower = 0.4;
 	public static final double terminalVelocity = 10.0;
 	private static ArrayList<Integer> heightMap = new ArrayList<Integer>();
 	private static int offsetX = 0;
