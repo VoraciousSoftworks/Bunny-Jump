@@ -391,6 +391,10 @@ public class Play extends Screen {
 				jet.tick();
 				if (jet.getX() < getOffsetX() * -1) {
 					jetsToRemove.add(jet);
+				}else if(jet.hitTest(bunny)){
+					jetsToRemove.add(jet);
+					bunny.setVelY(bunny.getVelY() - 15.0);
+					this.setEP(this.getEP() + 10);
 				}
 			}
 
@@ -403,6 +407,10 @@ public class Play extends Screen {
 				hawk.tick();
 				if (hawk.getX() < getOffsetX() * -1) {
 					hawksToRemove.add(hawk);
+				}else if(hawk.hitTest(bunny)){
+					hawksToRemove.add(hawk);
+					bunny.setVelY(bunny.getVelY() - 10.0);
+					this.setEP(this.getEP() + 5);
 				}
 			}
 
@@ -413,7 +421,7 @@ public class Play extends Screen {
 			for (Collectable collectable : collectables) {
 				collectable.tick();
 			}
-			boolean shouldEnd = false;
+			
 			ArrayList<Bomb> bombsToRemove = new ArrayList<Bomb>();
 			for (Bomb bomb : bombs) {
 				bomb.tick();
@@ -438,7 +446,8 @@ public class Play extends Screen {
 						
 						//if bomb hit bunny, shoot it into the air
 						if(bunny.getX() > bomb.getX() - Bomb.explosionSize/2 && bunny.getX() < bomb.getX() + Bomb.explosionSize/2){
-							bunny.setVelY(Bomb.explosionSize*1/(Math.abs(bunny.getX() - bomb.getX())));
+							bunny.setVelY(bunny.getVelY() - Bomb.explosionSize*1/(Math.abs(bunny.getX() - bomb.getX())));
+							this.setEP(this.getEP() + 25);
 						}
 					}
 				} else {

@@ -89,7 +89,7 @@ public class Evolution extends Screen {
 	}
 	
 	public int getCost(double currentStrength){
-		return (int)(Math.pow(1.2, currentStrength)/5.0);
+		return (int)(Math.pow(1.2, currentStrength)/500*currentStrength);
 	}
 
 	public void mouseClicked(MouseEvent e) {
