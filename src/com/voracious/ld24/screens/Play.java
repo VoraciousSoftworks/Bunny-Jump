@@ -14,6 +14,7 @@ import com.voracious.ld24.entities.Bunny;
 import com.voracious.ld24.entities.EvilHawk;
 import com.voracious.ld24.entities.Jet;
 import com.voracious.ld24.entities.Collectable;
+import com.voracious.ld24.entities.Snake;
 
 public class Play extends Screen {
 
@@ -30,6 +31,7 @@ public class Play extends Screen {
 	private boolean selectingStats = false;
 	private ArrayList<EvilHawk> hawks = new ArrayList<EvilHawk>();
 	private ArrayList<Jet> jets = new ArrayList<Jet>();
+	private ArrayList<Snake> snakes = new ArrayList<Snake>();
 	private ArrayList<Collectable> collectables = new ArrayList<Collectable>();
 	private int collectableSpawnRate = 100;
 	private int EP = 0;
@@ -88,7 +90,7 @@ public class Play extends Screen {
 				temp.setY(rand.nextDouble() * (this.getHeight() - heightMap.get(i) - 3));
 				int collectLevel = rand.nextInt(10);
 				collect = rand.nextInt(size / collectableSpawnRate) + i - 20;
-				if(temp.getY() >= this.getHeight() - 400){
+				if(temp.getY() >= 400){
 					if(collectLevel <= 3){
 						temp.setValue(1);
 						temp.setCurrentAnimation(0);
@@ -103,7 +105,7 @@ public class Play extends Screen {
 					}
 				}
 				
-				else if(temp.getY() <= this.getHeight() - 400){
+				else if(temp.getY() <= 400){
 					if(collectLevel <= 5){
 						temp.setValue(1);
 						temp.setCurrentAnimation(0);
@@ -273,6 +275,10 @@ public class Play extends Screen {
 			for (Collectable collectable : collectables) {
 				collectable.draw(this);
 			}
+			
+			for(Snake snake : snakes) {
+				snake.draw(this);
+			}
 		}
 
 	}
@@ -363,7 +369,13 @@ public class Play extends Screen {
 			if (bunny.getY() >= this.getHeight() - bunny.getHeight()) {				
 				endRun();
 			}
-
+			
+			for(Snake snake : snakes){
+				if(bunny.hitTest(snake)){
+					endRun();
+				}
+			}
+			
 			ArrayList<Collectable> collectsToRemove = new ArrayList<Collectable>();
 			for (Collectable collect : collectables) {
 				if (bunny.hitTest(collect)) {
@@ -383,7 +395,12 @@ public class Play extends Screen {
 					hawks.add(new EvilHawk(this));
 				}
 			}
-
+			
+			if(rand.nextInt(heightMap.size()) < Math.sqrt(offsetX) * 2){
+				int height = heightMap.get(this.getWidth());
+				snakes.add(new Snake(this, height));
+			}
+			
 			ArrayList<Jet> jetsToRemove = new ArrayList<Jet>();
 			for (Jet jet : jets) {
 				jet.tick();
@@ -406,6 +423,17 @@ public class Play extends Screen {
 
 			for (EvilHawk hawk : hawksToRemove) {
 				hawks.remove(hawk);
+			}
+			
+			ArrayList<Snake> snakesToRemove = new ArrayList<Snake>();
+			for(Snake snake : snakes){
+				snake.tick();
+				if(snake.getX() < getOffsetX() * -1){
+					snakesToRemove.add(snake);
+				}
+			}
+			for(Snake snake : snakesToRemove){
+				snakes.remove(snake);
 			}
 
 			for (Collectable collectable : collectables) {
@@ -452,6 +480,7 @@ public class Play extends Screen {
 		heightMap.clear();
 		hawks.clear();
 		jets.clear();
+		snakes.clear();
 		collectables.clear();
 		generateLevel(1.0f);
 		int highest = 0;
@@ -481,6 +510,9 @@ public class Play extends Screen {
 		}
 		for (Jet jet : jets) {
 			jet.setX(jet.getX() + offsetX - offset);
+		}
+		for(Snake snake : snakes){
+			snake.setX(snake.getX() + offsetX - offset);
 		}
 		for (Collectable collect : collectables) {
 			collect.setX(collect.getX() + offsetX - offset);
