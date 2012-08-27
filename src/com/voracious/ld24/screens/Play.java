@@ -10,6 +10,7 @@ import com.voracious.graphics.MouseHandler;
 import com.voracious.graphics.components.Entity;
 import com.voracious.graphics.components.Screen;
 import com.voracious.graphics.components.Sprite;
+import com.voracious.ld24.entities.Bomb;
 import com.voracious.ld24.entities.Bunny;
 import com.voracious.ld24.entities.EvilHawk;
 import com.voracious.ld24.entities.Jet;
@@ -19,6 +20,7 @@ import com.voracious.ld24.entities.Snake;
 public class Play extends Screen {
 
 	public static final double gravityPower = 1.0;
+	public static final double terminalVelocity = 10.0;
 	private static ArrayList<Integer> heightMap = new ArrayList<Integer>();
 	private static int offsetX = 0;
 	private static boolean[] keysDown = { false, false, false, false }; // w, a,
@@ -33,6 +35,8 @@ public class Play extends Screen {
 	private ArrayList<Jet> jets = new ArrayList<Jet>();
 	private ArrayList<Snake> snakes = new ArrayList<Snake>();
 	private ArrayList<Collectable> collectables = new ArrayList<Collectable>();
+	private ArrayList<Bomb> bombs = new ArrayList<Bomb>();
+
 	private int collectableSpawnRate = 100;
 	private int EP = 0;
 
@@ -81,6 +85,7 @@ public class Play extends Screen {
 				heightMap.add(Integer
 						.valueOf((int) (map[i] * Game.HEIGHT / 2) + 1));
 			}
+			
 			// This block generates collectables psuedorandomly and randomly
 			// picks their value
 			// on a weighted scale.
@@ -231,7 +236,8 @@ public class Play extends Screen {
 	public void render() {
 		for (int i = 0; i < this.getWidth(); i++) {
 			for (int j = 0; j < this.getHeight(); j++) {
-				int color = interpolateColor(0, 0x2b2baa, (float) j / this.getHeight());
+				int color = interpolateColor(0, 0x2b2baa,
+						(float) j / this.getHeight());
 				this.setPixel(color, i, j);
 			}
 		}
@@ -279,8 +285,11 @@ public class Play extends Screen {
 			for(Snake snake : snakes) {
 				snake.draw(this);
 			}
-		}
 
+			for (Bomb bomb : bombs) {
+				bomb.draw(this);
+			}
+		}
 	}
 
 	public void tick() {
@@ -390,7 +399,7 @@ public class Play extends Screen {
 
 			if (rand.nextInt(heightMap.size()) < Math.sqrt(offsetX) * 2) {
 				if (offsetX > heightMap.size() / 2 && rand.nextInt(3) < 2) {
-					jets.add(new Jet(this));
+					jets.add(new Jet(this, bombs));
 				} else {
 					hawks.add(new EvilHawk(this));
 				}
@@ -406,6 +415,10 @@ public class Play extends Screen {
 				jet.tick();
 				if (jet.getX() < getOffsetX() * -1) {
 					jetsToRemove.add(jet);
+				}else if(jet.hitTest(bunny)){
+					jetsToRemove.add(jet);
+					bunny.setVelY(bunny.getVelY() - 15.0);
+					this.setEP(this.getEP() + 10);
 				}
 			}
 
@@ -418,6 +431,10 @@ public class Play extends Screen {
 				hawk.tick();
 				if (hawk.getX() < getOffsetX() * -1) {
 					hawksToRemove.add(hawk);
+				}else if(hawk.hitTest(bunny)){
+					hawksToRemove.add(hawk);
+					bunny.setVelY(bunny.getVelY() - 10.0);
+					this.setEP(this.getEP() + 5);
 				}
 			}
 
@@ -438,6 +455,43 @@ public class Play extends Screen {
 
 			for (Collectable collectable : collectables) {
 				collectable.tick();
+			}
+			
+			ArrayList<Bomb> bombsToRemove = new ArrayList<Bomb>();
+			for (Bomb bomb : bombs) {
+				bomb.tick();
+				if (bomb.getX() > 0 && bomb.getX() < heightMap.size()) {
+					if (bomb.getY() > this.getHeight()
+							- heightMap.get((int) (getOffsetX() + bomb.getX()))) {
+						bombsToRemove.add(bomb);
+						
+						int startX = getOffsetX() + (int) bomb.getX()
+								- Bomb.explosionSize / 2;
+						for (int i = startX; i < startX + Bomb.explosionSize; i++) {
+							int ammountToDestroy = (int) Math
+									.sqrt((Bomb.explosionSize / 2)
+											* (Bomb.explosionSize / 2)
+											- ((i - startX) - (Bomb.explosionSize / 2))
+											* ((i - startX) - (Bomb.explosionSize / 2)));
+							int newHeight = heightMap.get(i) - ammountToDestroy;
+							if (newHeight < 0)
+								newHeight = 0;
+							heightMap.set(i, newHeight);
+						}
+						
+						//if bomb hit bunny, shoot it into the air
+						if(bunny.getX() > bomb.getX() - Bomb.explosionSize/2 && bunny.getX() < bomb.getX() + Bomb.explosionSize/2){
+							bunny.setVelY(bunny.getVelY() - Bomb.explosionSize*1/(Math.abs(bunny.getX() - bomb.getX())));
+							this.setEP(this.getEP() + 25);
+						}
+					}
+				} else {
+					bombsToRemove.add(bomb);
+				}
+			}
+
+			for (Bomb bomb : bombsToRemove) {
+				bombs.remove(bomb);
 			}
 		}
 	}
@@ -482,6 +536,7 @@ public class Play extends Screen {
 		jets.clear();
 		snakes.clear();
 		collectables.clear();
+		bombs.clear();
 		generateLevel(1.0f);
 		int highest = 0;
 		for (int i = 0; i < bunny.getWidth(); i++) {
