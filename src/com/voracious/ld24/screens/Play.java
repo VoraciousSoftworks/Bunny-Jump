@@ -7,6 +7,7 @@ import java.util.Random;
 import com.voracious.graphics.Game;
 import com.voracious.graphics.InputHandler;
 import com.voracious.graphics.MouseHandler;
+import com.voracious.graphics.components.Entity;
 import com.voracious.graphics.components.Screen;
 import com.voracious.graphics.components.Sprite;
 import com.voracious.ld24.entities.Bunny;
@@ -64,7 +65,6 @@ public class Play extends Screen {
 
 		int pitfall = rand.nextInt(size / 10) + 50;
 		int collect = rand.nextInt(size / collectableSpawnRate) + 20;
-		int collectLevel = rand.nextInt(10);
 		float[] map = generatePerlinNoise(generateWhiteNoise(size), 9);
 		for (int i = 0; i < size; i++) {
 			if (i == pitfall) {
@@ -82,30 +82,41 @@ public class Play extends Screen {
 			//This block generates collectables psuedorandomly and randomly picks their value
 			// on a weighted scale.
 			if(i >= collect){
-				if(collectLevel <= 5){
-					Collectable temp = new Collectable(1);
-					temp.setX(i);
-					temp.setY(rand.nextDouble() * (this.getHeight() - heightMap.get(i) + 3));
-					collectables.add(temp);
-					collect = rand.nextInt(size / collectableSpawnRate) + i - 20;
-					collectLevel = rand.nextInt(10);
+				Collectable temp = new Collectable(1);
+				temp.setX(i);
+				temp.setY(rand.nextDouble() * (this.getHeight() - heightMap.get(i) - 3));
+				int collectLevel = rand.nextInt(10);
+				collect = rand.nextInt(size / collectableSpawnRate) + i - 20;
+				if(temp.getY() >= this.getHeight() - 400){
+					if(collectLevel <= 3){
+						temp.setValue(1);
+						temp.setCurrentAnimation(0);
+					}
+					else if(collectLevel > 3 && collectLevel <= 7){
+						temp.setValue(2);
+						temp.setCurrentAnimation(1);
+					}
+					else if(collectLevel > 7){
+						temp.setValue(3);
+						temp.setCurrentAnimation(2);
+					}
 				}
-				else if(collectLevel > 5 && collectLevel <= 8){
-					Collectable temp = new Collectable(2);
-					temp.setX(i);
-					temp.setY(rand.nextDouble() * (this.getHeight() - heightMap.get(i) + 3));
-					collectables.add(temp);
-					collect = rand.nextInt(size / collectableSpawnRate) + i - 20;
-					collectLevel = rand.nextInt(10);
+				
+				else if(temp.getY() <= this.getHeight() - 400){
+					if(collectLevel <= 5){
+						temp.setValue(1);
+						temp.setCurrentAnimation(0);
+					}
+					else if(collectLevel > 5 && collectLevel <= 8){
+						temp.setValue(2);
+						temp.setCurrentAnimation(1);
+					}
+					else if(collectLevel == 9){
+						temp.setValue(3);
+						temp.setCurrentAnimation(2);
+					}
 				}
-				else if(collectLevel == 9){
-					Collectable temp = new Collectable(3);
-					temp.setX(i);
-					temp.setY(rand.nextDouble() * (this.getHeight() - heightMap.get(i) + 3));
-					collectables.add(temp);
-					collect = rand.nextInt(size / collectableSpawnRate) + i - 20;
-					collectLevel = rand.nextInt(10);
-				}
+				collectables.add(temp);
 			}
 			
 		}
@@ -329,7 +340,7 @@ public class Play extends Screen {
 				}
 			}
 
-			if (bunny.getY() >= this.getHeight() - bunny.getHeight()) {
+			if (bunny.getY() >= this.getHeight() - bunny.getHeight()) {				
 				endRun();
 			}
 			

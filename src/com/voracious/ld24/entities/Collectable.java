@@ -32,5 +32,11 @@ public class Collectable extends Entity{
 	public int getValue(){
 		return value;
 	}
+	
+	public void setValue(int v){
+		value = v;
+		if(v == 3)
+			this.play();
+	}
 
 }
