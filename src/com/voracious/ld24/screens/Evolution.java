@@ -45,8 +45,6 @@ public class Evolution extends Screen {
 				"done", "done"));
 	}
 
-	//TODO Make it so that adding to stats can only use the number of evolution points at
-	// the bottom of the screen/
 	public void render() {
 		play.setOffsetY(0);
 		clear(-1);
@@ -54,15 +52,15 @@ public class Evolution extends Screen {
 
 		moveText.draw(this, 15, 20);
 		drawButton(buttons.get(0));
-		new Text(Integer.toString((int) bunny.getMoveSpeed())).draw(this, 27,
-				33);
+		new Text(Integer.toString((int) (bunny.getMoveSpeed()*10))).draw(this, 27, 33);
 		drawButton(buttons.get(1));
+		new Text("Cost: " + (getCost(bunny.getMoveSpeed()*8) + "EP")).draw(this, 60, 33);
 
 		jumpText.draw(this, 15, 45);
 		drawButton(buttons.get(2));
-		new Text(Integer.toString((int) bunny.getJumpPower())).draw(this, 27,
-				58);
+		new Text(Integer.toString(((int) (bunny.getJumpPower()*10))/4)).draw(this, 27, 58);
 		drawButton(buttons.get(3));
+		new Text("Cost: " + (getCost(bunny.getJumpPower()*2.4) + "EP")).draw(this, 60, 58);
 
 		drawButton(buttons.get(4));
 		
@@ -89,6 +87,10 @@ public class Evolution extends Screen {
 		label.draw(this, button.getX() + buttonPadding, button.getY()
 				+ buttonPadding);
 	}
+	
+	public int getCost(double currentStrength){
+		return (int)(Math.pow(1.2, currentStrength)/5.0);
+	}
 
 	public void mouseClicked(MouseEvent e) {
 		if (play.isSelectingStats()) {
@@ -97,13 +99,25 @@ public class Evolution extends Screen {
 						/ Game.SCALE)) {
 					String action = button.getAction();
 					if (action.equals("+move")) {
-						bunny.setMoveSpeed(bunny.getMoveSpeed() + 1);
+						if(play.getEP() >= getCost(bunny.getMoveSpeed()*8)){
+							play.setEP(play.getEP() - getCost(bunny.getMoveSpeed()*8));
+							bunny.setMoveSpeed(bunny.getMoveSpeed() + 0.1);
+						}
 					} else if (action.equals("-move")) {
-						bunny.setMoveSpeed(bunny.getMoveSpeed() - 1);
+						if(bunny.getMoveSpeed() > 2){
+							bunny.setMoveSpeed(bunny.getMoveSpeed() - 0.1);
+							play.setEP(play.getEP() + getCost(bunny.getMoveSpeed()*8));
+						}
 					} else if (action.equals("+jump")) {
-						bunny.setJumpPower(bunny.getJumpPower() + 1);
+						if(play.getEP() >= getCost(bunny.getJumpPower()*2.4)){
+							play.setEP(play.getEP() - getCost(bunny.getJumpPower()*2.4));
+							bunny.setJumpPower(bunny.getJumpPower() + 1);
+						}
 					} else if (action.equals("-jump")) {
-						bunny.setJumpPower(bunny.getJumpPower() - 1);
+						if(bunny.getJumpPower() > 8){
+							bunny.setJumpPower(bunny.getJumpPower() - 1);
+							play.setEP(play.getEP() + getCost(bunny.getJumpPower()*2.4));
+						}
 					} else if (action.equals("done")) {
 						play.setOffsetY(play.getHeight() - Game.HEIGHT);
 						play.setSelectingStats(false);

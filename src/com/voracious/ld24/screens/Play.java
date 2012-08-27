@@ -275,7 +275,7 @@ public class Play extends Screen {
 
 		} else {
 			if (keysDown[1]) { // a
-				if (bunny.getX() > 45
+				if (bunny.getX() > 65
 						|| (offsetX == 0 && bunny.getX() - bunny.getMoveSpeed() > 0)) {
 					bunny.setX(bunny.getX() - bunny.getMoveSpeed());
 				} else if (offsetX - bunny.getMoveSpeed() > 0) {
@@ -286,7 +286,7 @@ public class Play extends Screen {
 
 				bunny.nextFrame();
 			} else if (keysDown[3]) { // d
-				if (bunny.getX() < this.getWidth() - bunny.getWidth() - 45
+				if (bunny.getX() < this.getWidth() - bunny.getWidth() - 65
 						|| (offsetX == heightMap.size() - this.getWidth() && bunny
 								.getX() + bunny.getMoveSpeed() < this
 								.getWidth() - bunny.getWidth())) {
@@ -300,8 +300,7 @@ public class Play extends Screen {
 				bunny.nextFrame();
 			}
 
-			if (bunny.getY() < getHeight() - Game.HEIGHT + 45
-					&& bunny.getVelY() < 0) {
+			if (bunny.getY() < getHeight() - Game.HEIGHT + 45) {
 				setOffsetY((int) (getOffsetY() + bunny.getVelY()));
 			} else if (bunny.getY() > Game.HEIGHT - 45 && bunny.getVelY() > 0) {
 				if (getOffsetY() < getHeight() - Game.HEIGHT - bunny.getVelY()) {
