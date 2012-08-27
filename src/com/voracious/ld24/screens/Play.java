@@ -79,7 +79,8 @@ public class Play extends Screen {
 				heightMap.add(Integer
 						.valueOf((int) (map[i] * Game.HEIGHT / 2) + 1));
 			}
-			//This block generates collectables psuedorandomly and randomly picks their value
+			// This block generates collectables psuedorandomly and randomly
+			// picks their value
 			// on a weighted scale.
 			if(i >= collect){
 				Collectable temp = new Collectable(1);
@@ -118,7 +119,7 @@ public class Play extends Screen {
 				}
 				collectables.add(temp);
 			}
-			
+
 		}
 
 		femBunny.setX(this.getWidth() - femBunny.getWidth());
@@ -211,8 +212,27 @@ public class Play extends Screen {
 		return x0 * (1 - alpha) + alpha * x1;
 	}
 
+	public int interpolateColor(int col1, int col2, float alpha) {
+		int r1 = (col1 & 0xff0000) / 0xffff;
+		int g1 = (col1 & 0xff00) / 0xff;
+		int b1 = col1 & 0xff;
+
+		int r2 = (col2 & 0xff0000) / 0xffff;
+		int g2 = (col2 & 0xff00) / 0xff;
+		int b2 = col2 & 0xff;
+
+		return ((int) Interpolate(r1, r2, alpha) * 0xffff)
+				+ ((int) Interpolate(g1, g2, alpha) * 0xff)
+				+ ((int) Interpolate(b1, b2, alpha));
+	}
+
 	public void render() {
-		clear(0x2b2bAA);
+		for (int i = 0; i < this.getWidth(); i++) {
+			for (int j = 0; j < this.getHeight(); j++) {
+				int color = interpolateColor(0, 0x2b2baa, (float) j / this.getHeight());
+				this.setPixel(color, i, j);
+			}
+		}
 
 		if (selectingStats) {
 			evolution.render();
@@ -249,8 +269,8 @@ public class Play extends Screen {
 			for (EvilHawk hawk : hawks) {
 				hawk.draw(this);
 			}
-			
-			for(Collectable collectable : collectables){
+
+			for (Collectable collectable : collectables) {
 				collectable.draw(this);
 			}
 		}
@@ -286,11 +306,12 @@ public class Play extends Screen {
 				}
 				bunny.nextFrame();
 			}
-			
-			if (getOffsetY() < getHeight() - Game.HEIGHT - bunny.getVelY()) {
-				if (bunny.getY() < Game.HEIGHT + 45 && bunny.getVelY() < 0) {
-					setOffsetY((int) (getOffsetY() + bunny.getVelY()));
-				} else if (bunny.getY() > Game.HEIGHT - 45 && bunny.getVelY() > 0) {
+
+			if (bunny.getY() < getHeight() - Game.HEIGHT + 45
+					&& bunny.getVelY() < 0) {
+				setOffsetY((int) (getOffsetY() + bunny.getVelY()));
+			} else if (bunny.getY() > Game.HEIGHT - 45 && bunny.getVelY() > 0) {
+				if (getOffsetY() < getHeight() - Game.HEIGHT - bunny.getVelY()) {
 					setOffsetY((int) (getOffsetY() + bunny.getVelY()));
 				}
 			}
@@ -343,20 +364,20 @@ public class Play extends Screen {
 			if (bunny.getY() >= this.getHeight() - bunny.getHeight()) {				
 				endRun();
 			}
-			
+
 			ArrayList<Collectable> collectsToRemove = new ArrayList<Collectable>();
-			for(Collectable collect : collectables){
-				if(bunny.hitTest(collect)){
-					EP+= collect.getValue();
+			for (Collectable collect : collectables) {
+				if (bunny.hitTest(collect)) {
+					EP += collect.getValue();
 					collectsToRemove.add(collect);
 				}
 			}
-			
-			for(Collectable collect : collectsToRemove){
+
+			for (Collectable collect : collectsToRemove) {
 				collectables.remove(collect);
 			}
 
-			if (rand.nextInt(heightMap.size()) < Math.sqrt(offsetX)*2) {
+			if (rand.nextInt(heightMap.size()) < Math.sqrt(offsetX) * 2) {
 				if (offsetX > heightMap.size() / 2 && rand.nextInt(3) < 2) {
 					jets.add(new Jet(this));
 				} else {
@@ -387,8 +408,8 @@ public class Play extends Screen {
 			for (EvilHawk hawk : hawksToRemove) {
 				hawks.remove(hawk);
 			}
-			
-			for (Collectable collectable : collectables){
+
+			for (Collectable collectable : collectables) {
 				collectable.tick();
 			}
 		}
@@ -440,7 +461,7 @@ public class Play extends Screen {
 				highest = heightMap.get(i);
 			}
 		}
-		bunny.setY(this.getHeight() - highest - bunny.getHeight());
+		bunny.setY(this.getHeight() - highest - bunny.getHeight() - 10);
 	}
 
 	public void setSelectingStats(boolean selecting) {
@@ -468,12 +489,12 @@ public class Play extends Screen {
 
 		offsetX = offset;
 	}
-	
-	public int getEP(){
+
+	public int getEP() {
 		return EP;
 	}
-	
-	public void setEP(int p){
+
+	public void setEP(int p) {
 		EP = p;
 	}
 }

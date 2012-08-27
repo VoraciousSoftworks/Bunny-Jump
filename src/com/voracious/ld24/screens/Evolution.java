@@ -1,5 +1,6 @@
 package com.voracious.ld24.screens;
 
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -15,8 +16,8 @@ public class Evolution extends Screen {
 	public static final int buttonColor = 0xAAAAAA;
 	private Bunny bunny;
 	private Play play;
-	private Text plusText = new Text("+");
-	private Text minusText = new Text("-");
+	private Text plusText = new Text("+", Color.BLACK);
+	private Text minusText = new Text("-", Color.BLACK);
 	private Text titleText = new Text("Evolve");
 	private Text moveText = new Text("Move speed");
 	private Text jumpText = new Text("Jump power");
@@ -77,7 +78,7 @@ public class Evolution extends Screen {
 		} else if (button.getLabel() == "-") {
 			label = minusText;
 		} else {
-			label = new Text(button.getLabel());
+			label = new Text(button.getLabel(), Color.BLACK);
 		}
 
 		for (int i = 0; i < label.getHeight() + 2 * buttonPadding; i++) {
