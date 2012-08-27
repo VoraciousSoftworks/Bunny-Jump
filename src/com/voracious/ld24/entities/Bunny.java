@@ -28,7 +28,9 @@ public class Bunny extends Entity {
 	public void tick() {
 		super.tick();
 		if(falling){
-			setVelY(getVelY() + Play.gravityPower);
+			if (getVelY() < Play.terminalVelocity) {
+				setVelY(getVelY() + Play.gravityPower);
+			}
 		}
 		
 		this.setY(this.getY() + getVelY());
