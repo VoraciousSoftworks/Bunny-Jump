@@ -7,9 +7,9 @@ import java.util.Random;
 import com.voracious.graphics.Game;
 import com.voracious.graphics.InputHandler;
 import com.voracious.graphics.MouseHandler;
-import com.voracious.graphics.components.Entity;
 import com.voracious.graphics.components.Screen;
 import com.voracious.graphics.components.Sprite;
+import com.voracious.graphics.components.Text;
 import com.voracious.ld24.entities.Bomb;
 import com.voracious.ld24.entities.Bunny;
 import com.voracious.ld24.entities.EvilHawk;
@@ -31,13 +31,14 @@ public class Play extends Screen {
 	private Bunny femBunny = new Bunny();
 	private Sprite spikes = new Sprite(5, 5, "/spikes.png");
 	private boolean selectingStats = false;
+	private boolean drawWin = false;
 	private ArrayList<EvilHawk> hawks = new ArrayList<EvilHawk>();
 	private ArrayList<Jet> jets = new ArrayList<Jet>();
 	private ArrayList<Snake> snakes = new ArrayList<Snake>();
 	private ArrayList<Collectable> collectables = new ArrayList<Collectable>();
 	private ArrayList<Bomb> bombs = new ArrayList<Bomb>();
 
-	private int collectableSpawnRate = 100;
+	private int collectableSpawnRate = 400;
 	private int EP = 0;
 
 	public Play(int width, int height) {
@@ -48,7 +49,7 @@ public class Play extends Screen {
 	public void start() {
 		InputHandler.register(this);
 		MouseHandler.register(evolution);
-		generateLevel(1.0f);
+		generateLevel(4.0f);
 		offsetX = 0;
 		int highest = 0;
 		for (int i = (int) bunny.getX() + offsetX; i < bunny.getWidth()
@@ -59,7 +60,7 @@ public class Play extends Screen {
 		}
 		bunny.setY(this.getHeight() - highest - bunny.getHeight());
 		setOffsetY(this.getHeight() - Game.HEIGHT);
-		// Game.getMusic("loop").play(true);
+		Game.getMusic("loop").play(true);
 	}
 
 	public void stop() {
@@ -69,17 +70,18 @@ public class Play extends Screen {
 	public void generateLevel(float difficulty) {
 		int size = (int) (difficulty * 0xfff);
 
-		int pitfall = rand.nextInt(size / 10) + 50;
+		int pitfall = rand.nextInt(size / 20) + 20;
 		int collect = rand.nextInt(size / collectableSpawnRate) + 20;
+		int snakeGen = rand.nextInt(size / 16) + 20;
 		float[] map = generatePerlinNoise(generateWhiteNoise(size), 9);
 		for (int i = 0; i < size; i++) {
-			if (i == pitfall) {
+			if (i >= pitfall) {
 				int pitfallSize = 25 + rand.nextInt(50 - 25);
 				for (int j = 0; j < pitfallSize; j++) {
 					heightMap.add(0);
 				}
 				i += pitfallSize - 1;
-				pitfall = rand.nextInt(size / 10) + i - 50;
+				pitfall = rand.nextInt(size / 20) + i - 20;
 				continue;
 			} else {
 				heightMap.add(Integer
@@ -125,6 +127,22 @@ public class Play extends Screen {
 					}
 				}
 				collectables.add(temp);
+			}
+			
+			if(i >= snakeGen){
+				Snake temp = new Snake();
+				temp.setX(i-Snake.WIDTH);
+				int heighest = 0;
+				for(int j=i-Snake.WIDTH; j<i; j++){
+					if(heightMap.get(j) > heighest){
+						heighest = heightMap.get(j);
+					}
+				}
+				
+				temp.setY(this.getHeight() - heighest - Snake.HEIGHT);
+				
+				snakes.add(temp);
+				snakeGen = rand.nextInt(size / 16) + i - 20;
 			}
 
 		}
@@ -241,6 +259,13 @@ public class Play extends Screen {
 				this.setPixel(color, i, j);
 			}
 		}
+		
+		if(drawWin){
+			Sprite heart = new Sprite(7, 7, "/heart.png");
+			heart.draw(this, this.getWidth()/2 - 3, this.getHeight() - Game.HEIGHT/2 - 10);
+			Text text = new Text("WIN!");
+			text.draw(this, this.getWidth()/2 - text.getWidth()/2, this.getHeight() - Game.HEIGHT/2);
+		}
 
 		if (selectingStats) {
 			evolution.render();
@@ -293,7 +318,7 @@ public class Play extends Screen {
 	}
 
 	public void tick() {
-		if (selectingStats) {
+		if (selectingStats || drawWin) {
 
 		} else {
 			if (keysDown[1]) { // a
@@ -323,16 +348,18 @@ public class Play extends Screen {
 			}
 
 			if (bunny.getY() < getHeight() - Game.HEIGHT + 45) {
-				setOffsetY((int) (getOffsetY() + bunny.getVelY()));
-			} else if (bunny.getY() > Game.HEIGHT - 45 && bunny.getVelY() > 0) {
+				setOffsetY( (int) (getOffsetY() + bunny.getVelY()) >= 0 ? (int) (getOffsetY() + bunny.getVelY()) : 0 );
+				if(getOffsetY() == 0){
+					bunny.setVelY(0);
+				}
+			} else if (bunny.getY() > Game.HEIGHT - 45) {
 				if (getOffsetY() < getHeight() - Game.HEIGHT - bunny.getVelY()) {
-					setOffsetY((int) (getOffsetY() + bunny.getVelY()));
+					setOffsetY( ((int) (getOffsetY() + (bunny.getVelY() > 0 ? bunny.getVelY():1.5))) <= getHeight() - Game.HEIGHT ? ((int) (getOffsetY() + (bunny.getVelY() > 0 ? bunny.getVelY():1.5))) : getHeight() - Game.HEIGHT );
 				}
 			}
 
 			int highest = 0;
-			for (int i = (int) bunny.getX() + offsetX; i < bunny.getWidth()
-					+ (int) bunny.getX() + offsetX; i++) {
+			for (int i = (int) bunny.getX() + offsetX; i < bunny.getWidth() + (int) bunny.getX() + offsetX; i++) {
 				if (highest < heightMap.get(i)) {
 					highest = heightMap.get(i);
 				}
@@ -375,13 +402,15 @@ public class Play extends Screen {
 				}
 			}
 
+			
+			boolean shouldEnd = false;
 			if (bunny.getY() >= this.getHeight() - bunny.getHeight()) {				
-				endRun();
+				shouldEnd = true;
 			}
 			
 			for(Snake snake : snakes){
 				if(bunny.hitTest(snake)){
-					endRun();
+					shouldEnd = true;
 				}
 			}
 			
@@ -403,11 +432,6 @@ public class Play extends Screen {
 				} else {
 					hawks.add(new EvilHawk(this));
 				}
-			}
-			
-			if(rand.nextInt(heightMap.size()) < Math.sqrt(offsetX) * 2){
-				int height = heightMap.get(this.getWidth());
-				snakes.add(new Snake(this, height));
 			}
 			
 			ArrayList<Jet> jetsToRemove = new ArrayList<Jet>();
@@ -442,15 +466,8 @@ public class Play extends Screen {
 				hawks.remove(hawk);
 			}
 			
-			ArrayList<Snake> snakesToRemove = new ArrayList<Snake>();
 			for(Snake snake : snakes){
 				snake.tick();
-				if(snake.getX() < getOffsetX() * -1){
-					snakesToRemove.add(snake);
-				}
-			}
-			for(Snake snake : snakesToRemove){
-				snakes.remove(snake);
 			}
 
 			for (Collectable collectable : collectables) {
@@ -492,6 +509,14 @@ public class Play extends Screen {
 
 			for (Bomb bomb : bombsToRemove) {
 				bombs.remove(bomb);
+			}
+			
+			if(femBunny.hitTest(bunny)){
+				drawWin = true;
+			}
+			
+			if(shouldEnd){
+				endRun();
 			}
 		}
 	}
@@ -537,7 +562,7 @@ public class Play extends Screen {
 		snakes.clear();
 		collectables.clear();
 		bombs.clear();
-		generateLevel(1.0f);
+		generateLevel(4.0f);
 		int highest = 0;
 		for (int i = 0; i < bunny.getWidth(); i++) {
 			if (highest < heightMap.get(i)) {

@@ -12,7 +12,7 @@ public class Bunny extends Entity {
 	public static final String imageURI = "/Bunny.png";
 	
 	private double velY = 0.0;
-	private double jumpPower = 10.0;
+	private double jumpPower = 10;
 	private double moveSpeed = 3.0;
 	private boolean falling = false;
 

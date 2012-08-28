@@ -9,14 +9,9 @@ public class Snake extends Entity{
 	public static final int HEIGHT = 18;
 	public static final int[] numFrames = { 2 };
 	public static final String imageURI = "/snake.png";
-	private Play playScreen;
 	
-	public Snake(Play screen, int y){
+	public Snake(){
 		super(WIDTH, HEIGHT, numFrames, imageURI);
-		playScreen = screen;
-		this.setX(playScreen.getWidth());
-		this.setY(y);
 		this.play();
 	}
-
 }
